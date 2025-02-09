@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class Vehicle : Destructible
+public class Vehicle :  MonoBehaviour //Destructible
 {
     [SerializeField] protected float maxLinearVelocity;
     
@@ -9,6 +9,11 @@ public class Vehicle : Destructible
     [SerializeField] private AudioSource engineSound;
     [SerializeField] private float enginePitchModifier;
 
+    [Header("Zoom")] 
+    [SerializeField] protected Transform zoomOpticPosition;
+    public Transform ZoomOpticPosition => zoomOpticPosition;
+    
+    
     public virtual float LinearVelocity => 0;
 
     public float NormalizedLinearVelocity

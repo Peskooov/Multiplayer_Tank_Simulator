@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Camera))]
 public class VehicleCamera : MonoBehaviour
@@ -21,6 +22,11 @@ public class VehicleCamera : MonoBehaviour
     [SerializeField] private float distanceLerpRate;
     [SerializeField] private float distanceOffsetFromCollisionHit;
 
+    [Header("Zoom Optic")] 
+    [SerializeField] private GameObject zoomMaskEffect;  
+    [SerializeField] private float zoomFOV; 
+    [SerializeField] private float zoomMaxVerticalAngle; 
+    
     private new Camera camera;
     private Vector2 rotationControl;
 
@@ -28,11 +34,20 @@ public class VehicleCamera : MonoBehaviour
     private float deltaRotationY;
 
     private float currentDistance;
+    
+    //Zoom
+    private float defaultFOV; 
+    private float defaultMaxVerticalAngle;
+    private float lastDistance;
 
+    private bool isZoom;
+    
     private void Start()
     {
         camera = GetComponent<Camera>();
-
+        defaultFOV = camera.fieldOfView;
+        defaultMaxVerticalAngle = maxVerticalAngle;
+        
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -41,6 +56,8 @@ public class VehicleCamera : MonoBehaviour
     {
         UpdateControl();
 
+        isZoom = distance <= minDistance;
+        
         distance = Mathf.Clamp(distance, minDistance, maxDistance);
         
         //Calculate position & rotation
@@ -81,12 +98,43 @@ public class VehicleCamera : MonoBehaviour
         transform.rotation = finalRotation;
         transform.position = finalPosition;
         transform.position = AddLocalOffset(transform.position);
+        
+        // Zoom
+        zoomMaskEffect.SetActive(isZoom);
+
+        if (isZoom)
+        {
+            transform.position = vehicle.ZoomOpticPosition.position;
+            camera.fieldOfView = zoomFOV;
+            maxVerticalAngle = zoomMaxVerticalAngle;
+        }
+        else
+        {
+            camera.fieldOfView = defaultFOV;
+            maxVerticalAngle = defaultMaxVerticalAngle;
+        }
     }
 
     private void UpdateControl()
     {
         rotationControl = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
         distance += -Input.mouseScrollDelta.y * scrollSensetive;
+
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            isZoom = !isZoom;
+
+            if (isZoom)
+            {
+                lastDistance = distance;
+                distance = minDistance;
+            }
+            else
+            {
+                distance = lastDistance;
+                currentDistance = lastDistance;
+            }
+        }
     }
     
     private Vector3 AddLocalOffset(Vector3 position)
