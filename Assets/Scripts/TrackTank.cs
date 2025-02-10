@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
@@ -6,6 +7,8 @@ public class TrackWheelRow
 {
     [SerializeField] private WheelCollider[] colliders;
     [SerializeField] private Transform[] meshes;
+
+    public float minRpm;
     
     public void SetTorque( float motorTorque)
     {
@@ -25,6 +28,34 @@ public class TrackWheelRow
 
     public void UpdateMeshTransform()
     {
+        //Find min RPM
+        List<float> allRPM = new List<float>();
+
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            if (colliders[i].isGrounded)
+            {
+                allRPM.Add(colliders[i].rpm);
+            }
+        }
+
+        if (allRPM.Count > 0)
+        {
+            minRpm = Mathf.Abs(allRPM[0]);
+
+            for (int i = 0; i < allRPM.Count; i++)
+            {
+                if (Mathf.Abs(allRPM[i]) < minRpm)
+                {
+                    minRpm = Mathf.Abs(allRPM[i]);
+                }
+            }
+
+            minRpm = minRpm * Mathf.Sign(allRPM[0]);
+        }
+
+        float angle = minRpm * 360 / 60 * Time.fixedDeltaTime;
+        
         for (int i = 0; i < meshes.Length; i++)
         {
             Vector3 position;
@@ -33,7 +64,7 @@ public class TrackWheelRow
             colliders[i].GetWorldPose(out position, out rotation);
 
             meshes[i].position = position;
-            meshes[i].rotation = rotation;
+            meshes[i].Rotate(angle,0,0);
         }
     }
 
@@ -88,9 +119,11 @@ public class TrackTank : Vehicle
     [SerializeField] private float minSidewayStiffnessInPlace;
     [SerializeField] private float minSidewayStiffnessInMotion;
     
-    
     public override float LinearVelocity => rigidBody.velocity.magnitude;
     public float currentMotorTorque;
+
+    public float LeftWheelRPM => leftWheelRow.minRpm;
+    public float RightWheelRPM => rightWheelRow.minRpm;
     
     private Rigidbody rigidBody;
 
@@ -141,7 +174,7 @@ public class TrackTank : Vehicle
         //Rotate in place
         if (targetMotorTorque == 0 && steering != 0)
         {
-            if (LinearVelocity < 0.5f)
+            if (Mathf.Abs(leftWheelRow.minRpm) <1 || Mathf.Abs(rightWheelRow.minRpm) <1)
             {
                 leftWheelRow.SetTorque(rotateTorqueInPlace);
                 rightWheelRow.SetTorque(rotateTorqueInPlace);
@@ -172,12 +205,12 @@ public class TrackTank : Vehicle
             {
                 if (LinearVelocity < maxLinearVelocity)
                 {
-                    leftWheelRow.SetTorque(targetMotorTorque);
-                    rightWheelRow.SetTorque(targetMotorTorque);
+                    leftWheelRow.SetTorque(currentMotorTorque);
+                    rightWheelRow.SetTorque(currentMotorTorque);
                 }
             }
             
-            if (LinearVelocity < 0.5f)
+            if (steering != 0 && (Mathf.Abs(leftWheelRow.minRpm) <1 || Mathf.Abs(rightWheelRow.minRpm) <1))
             {
                 leftWheelRow.SetTorque(rotateTorqueInMotion);
                 rightWheelRow.SetTorque(rotateTorqueInMotion);
