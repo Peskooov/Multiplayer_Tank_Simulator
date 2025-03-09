@@ -1,9 +1,12 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Camera))]
 public class VehicleCamera : MonoBehaviour
 {
+    public static VehicleCamera Instance;
+    
     [SerializeField] private Vehicle vehicle;
     [SerializeField] private Vector3 offset;
 
@@ -41,7 +44,18 @@ public class VehicleCamera : MonoBehaviour
     private float lastDistance;
 
     private bool isZoom;
-    
+
+    private void Awake()
+    {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+    }
+
     private void Start()
     {
         camera = GetComponent<Camera>();
