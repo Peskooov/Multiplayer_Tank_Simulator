@@ -62,12 +62,14 @@ public class VehicleCamera : MonoBehaviour
         defaultFOV = camera.fieldOfView;
         defaultMaxVerticalAngle = maxVerticalAngle;
         
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.visible = false;
+        //Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void Update()
     {
+        if(vehicle == null) return;
+        
         UpdateControl();
 
         isZoom = distance <= minDistance;

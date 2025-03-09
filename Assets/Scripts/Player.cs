@@ -1,16 +1,105 @@
+using System;
 using Mirror;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : NetworkBehaviour
 {
-    [SerializeField] private Vehicle vehiclePrefab;
-
-    public Vehicle ActiveVehicle { get; set; }
-    
-    [Command]
-    private void CmdSpawnVehicle()
+    public static int TeamIDCounter;
+    public static Player Local
     {
-        SvSpawnClientVehicle();
+        get
+        {
+            var x = NetworkClient.localPlayer;
+
+            if (x != null)
+                return x.GetComponent<Player>();
+            
+            return null;
+        }
+    }
+
+    [SerializeField] private Vehicle vehiclePrefab;
+    public Vehicle ActiveVehicle { get; set; }
+
+    [Header("Player")]
+    [SyncVar(hook = nameof(OnNicknameChanged))]
+    public string Nickname;
+
+    [SyncVar] [SerializeField] private int teamID;
+    public int  TeamID => teamID;
+    
+    private void OnNicknameChanged(string old, string newValue)
+    {
+        gameObject.name = "Player_" + newValue; //OnClient
+    }
+
+    [Command] //OnServer
+    public void CndSetName(string name)
+    {
+        Nickname = name;
+        gameObject.name = "Player_" + name;
+    }
+
+    [Command]
+    public void CndSetTeamID(int teamID)
+    {
+        this.teamID = teamID;
+    }
+
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+
+        teamID = TeamIDCounter % 2;
+        TeamIDCounter++;
+    }
+
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+
+        if (authority)
+        {
+            CndSetName(NetworkSessionManager.Instance.GetComponent<NetworkManagerHUD>().PlayerNickname);
+        }
+    }
+
+    private void Update()
+    {
+        if (isServer)
+        {
+            if (Input.GetKeyDown(KeyCode.F9))
+            {
+                foreach (var p in FindObjectsOfType<Player>())
+                {
+                    if (p.ActiveVehicle != null)
+                    {
+                        NetworkServer.UnSpawn(p.ActiveVehicle.gameObject);
+                        Destroy(p.ActiveVehicle.gameObject);
+                        
+                        
+                    }
+                }
+
+                foreach (var p in FindObjectsOfType<Player>())
+                {
+                    p.SvSpawnClientVehicle();
+                }
+            }
+        }
+
+        if (authority)
+        {
+            if (Input.GetKeyDown(KeyCode.V))
+            {
+                if (Cursor.lockState != CursorLockMode.Locked)
+                    Cursor.lockState = CursorLockMode.Locked;
+                else
+                    Cursor.lockState = CursorLockMode.None;
+            }
+        }
     }
 
     [Server]
@@ -21,6 +110,11 @@ public class Player : NetworkBehaviour
         GameObject playerVehicle =
             Instantiate(vehiclePrefab.gameObject, transform.position,
                 Quaternion.identity); // spawn on client
+
+        playerVehicle.transform.position = teamID % 2 == 0
+            ? NetworkSessionManager.Instance.RandomSpawnPointRed
+            : NetworkSessionManager.Instance.RandomSpawnPointBlue;
+        
         NetworkServer.Spawn(playerVehicle, netIdentity.connectionToClient); // spawn on server
 
         ActiveVehicle = playerVehicle.GetComponent<Vehicle>();
@@ -32,6 +126,8 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     private void RpcSetVehicle(NetworkIdentity vehicle)
     {
+        if(vehicle == null) return;
+        
         ActiveVehicle = vehicle.GetComponent<Vehicle>();
 
         if (ActiveVehicle != null && ActiveVehicle.isOwned && VehicleCamera.Instance != null)

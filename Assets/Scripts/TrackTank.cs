@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 
 [Serializable]
@@ -89,6 +90,22 @@ public class TrackWheelRow
             colliders[i].brakeTorque = 0;
         }
     }
+
+    public void UpdateMeshRotationByRPM(float rpm)
+    {
+        float angle = rpm * 360 / 60 * Time.fixedDeltaTime;
+
+        for (int i =0; i < meshes.Length; i++)
+        {
+            Vector3 pos;
+            Quaternion rot;
+            
+            colliders[i].GetWorldPose(out pos, out rot);
+
+            meshes[i].position = pos;
+            meshes[i].Rotate(angle,0,0);
+        }
+    }
 }
 
 [RequireComponent(typeof(Rigidbody))]
@@ -134,6 +151,39 @@ public class TrackTank : Vehicle
     }
 
     private void FixedUpdate()
+    {
+        if (authority)
+        {
+            UpdateMotorTorque();
+            
+            CmdUpdateWheelRpm(LeftWheelRPM,RightWheelRPM);
+        }
+    }
+
+    [Command]
+    private void CmdUpdateWheelRpm(float leftRpm, float rightRpm)
+    {
+        SvUpdateWheelRpm(leftRpm,rightRpm);
+    }
+
+    [Server]
+    private void SvUpdateWheelRpm(float leftRpm, float rightRpm)
+    {
+        RpcUpdateWheelRpm(leftRpm, rightRpm);
+    }
+
+    [ClientRpc(includeOwner = false)]
+    private void RpcUpdateWheelRpm(float leftRpm, float rightRpm)
+    {
+        leftWheelRow.minRpm = leftRpm;
+        rightWheelRow.minRpm = rightRpm;
+
+        leftWheelRow.UpdateMeshRotationByRPM(leftRpm);
+        rightWheelRow.UpdateMeshRotationByRPM(rightRpm);
+    }
+    
+    
+    private void UpdateMotorTorque()
     {
         float targetMotorTorque = targetInputControl.z>0 ? maxForwardMotorTorque * Mathf.RoundToInt(targetInputControl.z) : maxBackwardMotorTorque * Mathf.RoundToInt(targetInputControl.z);
         float breakTorque = this.breakTorque * targetInputControl.y;
