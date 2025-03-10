@@ -3,13 +3,15 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.UI;
 
+namespace Tanks2D
+{
 public class Turret : NetworkBehaviour
 {
     [SerializeField] private GameObject projectile;
     [SerializeField] private float fireRate;
 
     [SerializeField] private Slider slider;
-    
+
     private float currentTime;
 
     private void Start()
@@ -32,7 +34,7 @@ public class Turret : NetworkBehaviour
         if (isServer)
         {
             currentTime += Time.deltaTime;
-            
+
         }
     }
 
@@ -51,7 +53,7 @@ public class Turret : NetworkBehaviour
         projectile.transform.GetComponent<Projectile>().SetParent(transform);
 
         currentTime = 0;
-        
+
         RpcFire();
     }
 
@@ -61,4 +63,5 @@ public class Turret : NetworkBehaviour
         GameObject p = Instantiate(projectile, transform.position, transform.rotation);
         projectile.transform.GetComponent<Projectile>().SetParent(transform);
     }
+}
 }

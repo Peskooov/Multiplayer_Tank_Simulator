@@ -1,3 +1,4 @@
+using Mirror;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -12,10 +13,11 @@ public class Vehicle :  Destructible
     [Header("Zoom")] 
     [SerializeField] protected Transform zoomOpticPosition;
     public Transform ZoomOpticPosition => zoomOpticPosition;
-    
+
+    public Turret Turret;
     
     public virtual float LinearVelocity => 0;
-
+    
     public float NormalizedLinearVelocity
     {
         get
@@ -26,6 +28,25 @@ public class Vehicle :  Destructible
         }
     }
 
+    [SyncVar] private Vector3 netAimPoint;
+
+    public Vector3 NetAimPoint
+    {
+        get => netAimPoint;
+
+        set
+        {
+            netAimPoint = value; //client local
+            CmdSetNetAimPoint(value); //server
+        }
+    }
+    
+    [Command]
+    private void CmdSetNetAimPoint(Vector3 v)
+    {
+        netAimPoint = v;
+    }
+    
     protected Vector3 targetInputControl;
 
     public void SetTargetControl(Vector3 control)

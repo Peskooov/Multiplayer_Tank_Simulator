@@ -2,10 +2,8 @@ using System;
 using UnityEngine;
 
 [RequireComponent(typeof(TrackTank))]
-public class TankTurret : MonoBehaviour
+public class TankTurret : Turret
 {
-    [SerializeField] private Transform aim; 
-    
     [SerializeField] private Transform tower;
     [SerializeField] private Transform mask;
 
@@ -56,7 +54,7 @@ public class TankTurret : MonoBehaviour
     private void ControlTurretAim()
     {
         // Tower
-        Vector3 localPosition = tower.InverseTransformPoint(aim.position);
+        Vector3 localPosition = tower.InverseTransformPoint(tank.NetAimPoint);
         localPosition.y = 0;
 
         Vector3 localPositionGlobal = tower.TransformPoint(localPosition);
@@ -67,7 +65,7 @@ public class TankTurret : MonoBehaviour
         // Mask
         mask.localRotation = Quaternion.identity;
         
-        localPosition = mask.InverseTransformPoint(aim.position);
+        localPosition = mask.InverseTransformPoint(tank.NetAimPoint);
         localPosition.x = 0;
         localPositionGlobal = mask.TransformPoint(localPosition);
 
