@@ -23,6 +23,9 @@ public class VehicleInputControl : MonoBehaviour
             player.ActiveVehicle.NetAimPoint =
                 TraceAimPointWithoutPlayerVehicle(VehicleCamera.Instance.transform.position,
                     VehicleCamera.Instance.transform.forward);
+
+            if (Input.GetMouseButtonDown(0))
+                player.ActiveVehicle.Fire();
         }
     }
 

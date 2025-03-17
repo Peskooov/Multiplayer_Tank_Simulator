@@ -68,6 +68,14 @@ public class Player : NetworkBehaviour
 
     private void Update()
     {
+        if (isLocalPlayer)
+        {
+            if (ActiveVehicle != null)
+            {
+                ActiveVehicle.SetVisible(!VehicleCamera.Instance.IsZoom);
+            }
+        }
+        
         if (isServer)
         {
             if (Input.GetKeyDown(KeyCode.F9))

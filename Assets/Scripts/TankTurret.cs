@@ -29,16 +29,21 @@ public class TankTurret : Turret
         rigidBody = tank.GetComponent<Rigidbody>();
     }
 
-    private void Update()
+    protected override void Update()
     {
-        ControlTurretAim();
+        base.Update();
         
-        if(Input.GetMouseButtonDown(0))
-            Fire();
+        ControlTurretAim();
     }
 
-    public void Fire()
+    protected override void OnFire()
     {
+        base.OnFire();
+
+        GameObject projectile = Instantiate(projectilePrefab.gameObject);
+
+        projectile.transform.position = launchPoint.position;
+        projectile.transform.forward = launchPoint.forward;
         
         FireSFX();
     }

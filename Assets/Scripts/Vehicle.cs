@@ -40,6 +40,29 @@ public class Vehicle :  Destructible
             CmdSetNetAimPoint(value); //server
         }
     }
+
+    public void Fire()
+    {
+        Turret.Fire();
+    }
+
+    public void SetVisible(bool visible)
+    {
+        if(visible)
+            SetLayerToAll("Default");
+        else
+            SetLayerToAll("IgnoreMainCamera");
+    }
+
+    public void SetLayerToAll(string layerName)
+    {
+        gameObject.layer = LayerMask.NameToLayer(layerName);
+
+        foreach (Transform t in transform.GetComponentsInChildren<Transform>())
+        {
+            t.gameObject.layer = LayerMask.NameToLayer(layerName);
+        }
+    }
     
     [Command]
     private void CmdSetNetAimPoint(Vector3 v)

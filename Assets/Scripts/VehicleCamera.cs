@@ -44,6 +44,7 @@ public class VehicleCamera : MonoBehaviour
     private float lastDistance;
 
     private bool isZoom;
+    public bool IsZoom => isZoom;
 
     private void Awake()
     {

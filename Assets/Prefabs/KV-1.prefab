@@ -5103,7 +5103,7 @@ Transform:
   m_GameObject: {fileID: 140623934772643988}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalPosition: {x: 0, y: 2.156, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8183,7 +8183,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxHitPoints: 0
+  maxHitPoints: 480
   destroySFX: {fileID: 0}
   Owner: {fileID: 0}
   maxLinearVelocity: 30
@@ -8365,6 +8365,9 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   launchPoint: {fileID: 8955029554937941021}
+  fireRate: 7
+  projectilePrefab: {fileID: 1255542908695686924, guid: 1a7241b4351431f44bfefd3454b94772, type: 3}
+  ammoCount: 20
   tower: {fileID: 1449457900255757038}
   mask: {fileID: 3185492913762677815}
   horizontalRotationSpeed: 30
@@ -10401,13 +10404,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4827668316045414328}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
   m_LocalPosition: {x: 0, y: -1.871, z: 0.062}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1617175807616913515}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: -90, z: 0}
 --- !u!1 &4929745612714659319
 GameObject:
   m_ObjectHideFlags: 0

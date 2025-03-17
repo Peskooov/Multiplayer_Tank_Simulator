@@ -42,7 +42,7 @@ public class Destructible : NetworkBehaviour
     }
 
     [Server]
-    public void SvAppyDamage(int damage)
+    public void SvApplyDamage(int damage)
     {
         syncCurrentHitPoint -= damage;
 

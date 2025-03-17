@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+namespace Tanks2D
+{
 public class Projectile : MonoBehaviour
 {
     [SerializeField] private float movementSpeed;
@@ -39,7 +41,7 @@ public class Projectile : MonoBehaviour
                         destructible.SvAppyDamage(damage);
                     }
                 }
-                
+
                 if (NetworkSessionManager.Instance.IsClient)
                 {
                     Instantiate(destroySFX, transform.position, Quaternion.identity);
@@ -54,4 +56,5 @@ public class Projectile : MonoBehaviour
     {
         parent = p;
     }
+}
 }
