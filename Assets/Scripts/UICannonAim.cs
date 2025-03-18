@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,20 +9,16 @@ public class UICannonAim : MonoBehaviour
     [SerializeField] private Image reloadSlider;
     
     private Vector3 aimPosition;
-    private Camera mainCamera;
+    [SerializeField] private Camera mainCamera;
     
-    private void Start()
-    {
-        mainCamera = Camera.main;
-    }
-
+    
     private void Update()
-    {
-        if (Player.Local == null || Player.Local.ActiveVehicle == null || aim == null || mainCamera == null)
+    { 
+        if (Player.Local == null || Player.Local.ActiveVehicle == null)
             return;
 
         Vehicle vehicle = Player.Local.ActiveVehicle;
-
+        
         reloadSlider.fillAmount = vehicle.Turret.FireTimerNormalized; 
         
         aimPosition = VehicleInputControl.TraceAimPointWithoutPlayerVehicle(vehicle.Turret.LaunchPoint.position,

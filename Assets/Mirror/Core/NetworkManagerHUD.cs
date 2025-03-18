@@ -18,7 +18,7 @@ namespace Mirror
         {
             manager = GetComponent<NetworkManager>();
         }
-        
+
         void OnGUI()
         {
             // If this width is changed, also change offsetX in GUIConsole::OnGUI
@@ -47,10 +47,7 @@ namespace Mirror
             GUILayout.EndArea();
         }
 
-        [SerializeField] private string playerNickname;
-        public string PlayerNickname => playerNickname;
-        
-       void StartButtons()
+        void StartButtons()
         {
             if (!NetworkClient.active)
             {
@@ -58,17 +55,10 @@ namespace Mirror
                 // cant be a server in webgl build
                 if (GUILayout.Button("Single Player"))
                 {
-                    NetworkServer.dontListen = true;
+                    NetworkServer.listen = false;
                     manager.StartHost();
                 }
 #else
-                GUILayout.BeginHorizontal();
-                
-                GUILayout.Label("Nickname");
-                playerNickname = GUILayout.TextField(playerNickname);
-                
-                GUILayout.EndHorizontal();
-                
                 // Server + Client
                 if (GUILayout.Button("Host (Server + Client)"))
                     manager.StartHost();

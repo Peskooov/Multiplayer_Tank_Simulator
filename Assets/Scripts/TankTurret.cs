@@ -6,7 +6,10 @@ public class TankTurret : Turret
 {
     [SerializeField] private Transform tower;
     [SerializeField] private Transform mask;
-
+    
+    [Header("Spread")]
+    [SerializeField] private float spreadAngle = 1.0f; 
+    
     [SerializeField] private float horizontalRotationSpeed;
     [SerializeField] private float verticalRotationSpeed;
 
@@ -35,19 +38,30 @@ public class TankTurret : Turret
         
         ControlTurretAim();
     }
-
+    
     protected override void OnFire()
     {
         base.OnFire();
 
-        GameObject projectile = Instantiate(projectilePrefab.gameObject);
+        GameObject projectile = Instantiate(projectilePrefab[projectileIndex].gameObject);
 
+        Vector3 direction = ApplySpread(launchPoint.forward);
+        
         projectile.transform.position = launchPoint.position;
-        projectile.transform.forward = launchPoint.forward;
+        projectile.transform.forward = direction;
         
         FireSFX();
     }
 
+    private Vector3 ApplySpread(Vector3 direction)
+    {
+        float spreadX = UnityEngine.Random.Range(-spreadAngle, spreadAngle);
+        float spreadY = UnityEngine.Random.Range(-spreadAngle, spreadAngle);
+
+        Quaternion spreadRotation = Quaternion.Euler(spreadY, spreadX, 0);
+        return spreadRotation * direction;
+    }
+    
     private void FireSFX()
     {
         fireSound.Play();

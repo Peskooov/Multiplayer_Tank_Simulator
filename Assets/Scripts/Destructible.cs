@@ -7,6 +7,8 @@ public class Destructible : NetworkBehaviour
     [SerializeField] private int maxHitPoints;
     [SerializeField] private GameObject destroySFX;
 
+    [SerializeField] private UnityEvent OnDestroy;
+    
     public UnityAction<int> HitPointChange;
 
     public int MaxHitPoints => maxHitPoints;    
@@ -54,8 +56,21 @@ public class Destructible : NetworkBehaviour
                 NetworkServer.Spawn(sfx);
             }
 
-            Destroy(gameObject);
+            syncCurrentHitPoint = 0;
+            
+            RpcDestroy();
         }
+    }
+
+    [Client]
+    private void RpcDestroy()
+    {
+        OnDestructibleDestroy();
+    }
+
+    protected virtual void OnDestructibleDestroy()
+    {
+        OnDestroy?.Invoke();
     }
     
     private void ChangeHitPoint(int oldValue, int newValue)

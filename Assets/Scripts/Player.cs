@@ -2,6 +2,7 @@ using System;
 using Mirror;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Player : NetworkBehaviour
 {
@@ -29,20 +30,22 @@ public class Player : NetworkBehaviour
     [SyncVar] [SerializeField] private int teamID;
     public int  TeamID => teamID;
     
+    public UnityAction<Vehicle> VehicleSpawned;
+    
     private void OnNicknameChanged(string old, string newValue)
     {
         gameObject.name = "Player_" + newValue; //OnClient
     }
 
     [Command] //OnServer
-    public void CndSetName(string name)
+    public void CmdSetName(string name)
     {
         Nickname = name;
         gameObject.name = "Player_" + name;
     }
 
     [Command]
-    public void CndSetTeamID(int teamID)
+    public void CmdSetTeamID(int teamID)
     {
         this.teamID = teamID;
     }
@@ -51,8 +54,8 @@ public class Player : NetworkBehaviour
     {
         base.OnStartServer();
 
-        teamID = TeamIDCounter % 2;
-        TeamIDCounter++;
+        //teamID = TeamIDCounter % 2;
+        //TeamIDCounter++;
     }
 
 
@@ -62,7 +65,7 @@ public class Player : NetworkBehaviour
 
         if (authority)
         {
-            CndSetName(NetworkSessionManager.Instance.GetComponent<NetworkManagerHUD>().PlayerNickname);
+           // CmdSetName(NetworkSessionManager.Instance.GetComponent<NetworkManagerHUD>().PlayerNickname);
         }
     }
 
@@ -86,8 +89,6 @@ public class Player : NetworkBehaviour
                     {
                         NetworkServer.UnSpawn(p.ActiveVehicle.gameObject);
                         Destroy(p.ActiveVehicle.gameObject);
-                        
-                        
                     }
                 }
 
@@ -142,5 +143,8 @@ public class Player : NetworkBehaviour
         {
             VehicleCamera.Instance.SetTarget(ActiveVehicle);
         }
+        
+        VehicleSpawned?.Invoke(ActiveVehicle);
     }
+    
 }

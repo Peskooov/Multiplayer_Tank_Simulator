@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [Serializable]
 public class TrackWheelRow
@@ -111,6 +112,8 @@ public class TrackWheelRow
 [RequireComponent(typeof(Rigidbody))]
 public class TrackTank : Vehicle
 {
+    [SerializeField] private GameObject visualModel;
+    [SerializeField] private GameObject destroyedTank;
     [SerializeField] private Transform centerOfMass;
     
     [Header("Traks")] 
@@ -287,5 +290,16 @@ public class TrackTank : Vehicle
         
         leftWheelRow.UpdateMeshTransform();
         rightWheelRow.UpdateMeshTransform();
+    }
+
+    protected override void OnDestructibleDestroy()
+    {
+        base.OnDestructibleDestroy();
+
+        GameObject ruinedTank = Instantiate(destroyedTank);
+        ruinedTank.transform.position = visualModel.transform.position;
+        ruinedTank.transform.rotation = visualModel.transform.rotation;
+        
+        visualModel.SetActive(false);
     }
 }

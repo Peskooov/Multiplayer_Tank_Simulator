@@ -10,33 +10,42 @@ public class Turret : NetworkBehaviour
     
     [SerializeField] private float fireRate;
 
-    [SerializeField] protected Projectile projectilePrefab;
-    public Projectile ProjectilePrefab => projectilePrefab;
+    [SerializeField] protected Projectile[] projectilePrefab;
+    public Projectile[] ProjectilePrefab => projectilePrefab;
 
+    protected int projectileIndex;
+    public int ProjectileIndex => projectileIndex;
+    
     private float fireTimer;
     public float FireTimerNormalized => fireTimer / fireRate;
 
     [SyncVar]
-    [SerializeField] protected int ammoCount;
-    public int AmmoCount => ammoCount;
+    [SerializeField] protected int[] ammoCount;
+    public int AmmoCount => ammoCount[projectileIndex];
 
     public UnityAction<int> OnAmmoChanged;
 
+    private void Awake()
+    {
+        projectileIndex = 0;
+    }
+
     [Server]
     public void SvAddAmmo(int count)
-    {
-        ammoCount += count;
+    { 
+        ammoCount[projectileIndex] += count;
+    
         RpcAmmoChanged();
     }
     
     [Server]
     protected virtual bool SvDrawAmmo(int count)
     {
-        if (ammoCount <= 0) return false;
+        if (ammoCount[projectileIndex] <= 0) return false;
 
-        if (ammoCount >= count)
+        if (ammoCount[projectileIndex] >= count)
         {
-            ammoCount -= count;
+            ammoCount[projectileIndex] -= count;
             RpcAmmoChanged();
 
             return true;
@@ -72,7 +81,7 @@ public class Turret : NetworkBehaviour
     [ClientRpc]
     private void RpcAmmoChanged()
     {
-        OnAmmoChanged?.Invoke(ammoCount);
+        OnAmmoChanged?.Invoke(ammoCount[projectileIndex]);
     }
     
     protected virtual void OnFire()
@@ -92,5 +101,23 @@ public class Turret : NetworkBehaviour
     {
         if (fireTimer > 0)
             fireTimer -= Time.deltaTime;
+        
+        if (isOwned)
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha1)) // Клавиша 1
+            {
+                projectileIndex = 0;
+                Debug.Log("Switched to projectile 1");
+                
+                RpcAmmoChanged();
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2)) // Клавиша 2
+            {
+                projectileIndex = 1;
+                Debug.Log("Switched to projectile 2");
+                
+                RpcAmmoChanged();
+            }
+        }
     }
 }
