@@ -3,29 +3,44 @@ using UnityEngine;
 public class VehicleInputControl : MonoBehaviour
 {
     public const float AimDistance = 1000;
-    
+
     private Player player;
 
     private void Awake()
     {
         player = GetComponent<Player>();
     }
-
+ 
     protected virtual void Update()
     {
-        if (player == null) return;
-        if (player.ActiveVehicle == null) return;
+        // Проверяем, что игрок и его транспортное средство существуют
+        if (player == null || player.ActiveVehicle == null) return;
 
-        if (player.isLocalPlayer && player.authority)
+        // Убедимся, что управление происходит только для локального игрока
+        if (player.isLocalPlayer)
         {
-            player.ActiveVehicle.SetTargetControl(new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Jump"),
-                Input.GetAxis("Vertical")));
-            player.ActiveVehicle.NetAimPoint =
-                TraceAimPointWithoutPlayerVehicle(VehicleCamera.Instance.transform.position,
-                    VehicleCamera.Instance.transform.forward);
+            // Управление движением
+            player.ActiveVehicle.SetTargetControl(new Vector3(
+                Input.GetAxis("Horizontal"),
+                Input.GetAxis("Jump"),
+                Input.GetAxis("Vertical")
+            ));
 
+            // Управление прицеливанием
+            if (player.ActiveVehicle.authority)
+            {
+                player.ActiveVehicle.NetAimPoint =
+                    TraceAimPointWithoutPlayerVehicle(
+                        VehicleCamera.Instance.transform.position,
+                        VehicleCamera.Instance.transform.forward
+                    );
+            }
+
+            // Обработка выстрела
             if (Input.GetMouseButtonDown(0))
+            {
                 player.ActiveVehicle.Fire();
+            }
         }
     }
 
@@ -35,16 +50,22 @@ public class VehicleInputControl : MonoBehaviour
 
         RaycastHit[] hits = Physics.RaycastAll(ray, AimDistance);
 
-        Rigidbody rb = Player.Local.ActiveVehicle.GetComponent<Rigidbody>();
+        // Получаем Rigidbody локального игрока, если он существует
+        Rigidbody rb = null;
+        if (Player.Local != null && Player.Local.ActiveVehicle != null)
+        {
+            rb = Player.Local.ActiveVehicle.GetComponent<Rigidbody>();
+        }
 
+        // Игнорируем попадание в транспортное средство локального игрока
         foreach (var hit in hits)
         {
-            if(hit.rigidbody == rb)
-                continue;
+            if (hit.rigidbody == rb) continue;
 
             return hit.point;
-        } 
-        
+        }
+
+        // Если ничего не найдено, возвращаем точку на расстоянии AimDistance
         return ray.GetPoint(AimDistance);
     }
 }

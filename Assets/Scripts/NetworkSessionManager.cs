@@ -17,6 +17,14 @@ public class NetworkSessionManager : NetworkManager
   public bool IsServer => (mode == NetworkManagerMode.Host || mode == NetworkManagerMode.ServerOnly);
   public bool IsClient => (mode == NetworkManagerMode.Host || mode == NetworkManagerMode.ClientOnly);
 
+  void Start()
+  {
+    if (transport == null)
+    {
+      Debug.LogError("No transport assigned to NetworkManager!");
+    }
+  }
+  
   public override void OnServerConnect(NetworkConnectionToClient conn)
   {
     base.OnServerConnect(conn);

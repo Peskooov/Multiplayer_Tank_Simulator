@@ -1,4 +1,4 @@
-using System;
+using System.Collections;
 using Mirror;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -15,7 +15,7 @@ public class Player : NetworkBehaviour
 
             if (x != null)
                 return x.GetComponent<Player>();
-            
+
             return null;
         }
     }
@@ -28,16 +28,16 @@ public class Player : NetworkBehaviour
     public string Nickname;
 
     [SyncVar] [SerializeField] private int teamID;
-    public int  TeamID => teamID;
-    
+    public int TeamID => teamID;
+
     public UnityAction<Vehicle> VehicleSpawned;
-    
+
     private void OnNicknameChanged(string old, string newValue)
     {
-        gameObject.name = "Player_" + newValue; //OnClient
+        gameObject.name = "Player_" + newValue; // OnClient
     }
 
-    [Command] //OnServer
+    [Command] // OnServer
     public void CmdSetName(string name)
     {
         Nickname = name;
@@ -54,10 +54,9 @@ public class Player : NetworkBehaviour
     {
         base.OnStartServer();
 
-        //teamID = TeamIDCounter % 2;
-        //TeamIDCounter++;
+        // teamID = TeamIDCounter % 2;
+        // TeamIDCounter++;
     }
-
 
     public override void OnStartClient()
     {
@@ -65,7 +64,7 @@ public class Player : NetworkBehaviour
 
         if (authority)
         {
-           // CmdSetName(NetworkSessionManager.Instance.GetComponent<NetworkManagerHUD>().PlayerNickname);
+            // CmdSetName(NetworkSessionManager.Instance.GetComponent<NetworkManagerHUD>().PlayerNickname);
         }
     }
 
@@ -73,12 +72,12 @@ public class Player : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            if (ActiveVehicle != null)
+            if (ActiveVehicle != null && VehicleCamera.Instance != null)
             {
                 ActiveVehicle.SetVisible(!VehicleCamera.Instance.IsZoom);
             }
         }
-        
+
         if (isServer)
         {
             if (Input.GetKeyDown(KeyCode.F9))
@@ -89,6 +88,7 @@ public class Player : NetworkBehaviour
                     {
                         NetworkServer.UnSpawn(p.ActiveVehicle.gameObject);
                         Destroy(p.ActiveVehicle.gameObject);
+                        p.ActiveVehicle = null; // Сбрасываем ссылку на объект
                     }
                 }
 
@@ -115,19 +115,23 @@ public class Player : NetworkBehaviour
     public void SvSpawnClientVehicle()
     {
         if (ActiveVehicle != null) return;
-        
-        GameObject playerVehicle =
-            Instantiate(vehiclePrefab.gameObject, transform.position,
+
+        Debug.Log("Spawning tank on server");
+        GameObject playerVehicle = Instantiate(vehiclePrefab.gameObject, transform.position,
                 Quaternion.identity); // spawn on client
 
         playerVehicle.transform.position = teamID % 2 == 0
             ? NetworkSessionManager.Instance.RandomSpawnPointRed
             : NetworkSessionManager.Instance.RandomSpawnPointBlue;
-        
+
         NetworkServer.Spawn(playerVehicle, netIdentity.connectionToClient); // spawn on server
+
+        Debug.Log("Tank spawned with netId: " + playerVehicle.GetComponent<NetworkIdentity>().netId);
 
         ActiveVehicle = playerVehicle.GetComponent<Vehicle>();
         ActiveVehicle.Owner = netIdentity;
+
+        Debug.Log("Tank owner set to: " + netIdentity.netId);
 
         RpcSetVehicle(ActiveVehicle.netIdentity);
     }
@@ -135,16 +139,46 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     private void RpcSetVehicle(NetworkIdentity vehicle)
     {
-        if(vehicle == null) return;
-        
-        ActiveVehicle = vehicle.GetComponent<Vehicle>();
-
-        if (ActiveVehicle != null && ActiveVehicle.isOwned && VehicleCamera.Instance != null)
+        if (vehicle == null)
         {
-            VehicleCamera.Instance.SetTarget(ActiveVehicle);
+            Debug.LogWarning("RpcSetVehicle: vehicle is null");
+            return;
         }
-        
-        VehicleSpawned?.Invoke(ActiveVehicle);
+
+        StartCoroutine(WaitAndSetVehicle(vehicle));
     }
-    
+
+    private IEnumerator WaitAndSetVehicle(NetworkIdentity vehicle)
+    {
+        yield return new WaitForSeconds(0.1f); // Подождать 100 мс
+
+        if (vehicle != null)
+        {
+            ActiveVehicle = vehicle.GetComponent<Vehicle>();
+
+            if (ActiveVehicle != null && ActiveVehicle.isOwned && VehicleCamera.Instance != null)
+            {
+                Debug.Log("Setting vehicle target for camera");
+                VehicleCamera.Instance.SetTarget(ActiveVehicle);
+            }
+
+            VehicleSpawned?.Invoke(ActiveVehicle);
+        }
+        else
+        {
+            Debug.LogWarning("WaitAndSetVehicle: vehicle is null after delay");
+        }
+    }
+
+    [Server]
+    public void SvDespawnClientVehicle()
+    {
+        if (ActiveVehicle != null)
+        {
+            Debug.Log("Despawning tank on server");
+            NetworkServer.UnSpawn(ActiveVehicle.gameObject);
+            Destroy(ActiveVehicle.gameObject);
+            ActiveVehicle = null; // Сбрасываем ссылку на объект
+        }
+    }
 }

@@ -72,6 +72,7 @@ public class TankTurret : Turret
 
     private void ControlTurretAim()
     {
+        if(!authority) return;
         // Tower
         Vector3 localPosition = tower.InverseTransformPoint(tank.NetAimPoint);
         localPosition.y = 0;
