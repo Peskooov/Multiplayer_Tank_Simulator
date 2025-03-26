@@ -14,6 +14,9 @@ namespace Mirror
         public int offsetX;
         public int offsetY;
 
+        [SerializeField] private string playerNickname;
+        public string PlayerNickname => playerNickname;
+        
         void Awake()
         {
             manager = GetComponent<NetworkManager>();
@@ -59,6 +62,13 @@ namespace Mirror
                     manager.StartHost();
                 }
 #else
+                GUILayout.BeginHorizontal();
+                
+                GUILayout.Label("Nickname");
+                playerNickname = GUILayout.TextField(playerNickname);
+                
+                GUILayout.EndHorizontal();
+                
                 // Server + Client
                 if (GUILayout.Button("Host (Server + Client)"))
                     manager.StartHost();

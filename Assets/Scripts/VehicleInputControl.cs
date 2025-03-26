@@ -27,7 +27,7 @@ public class VehicleInputControl : MonoBehaviour
             ));
 
             // Управление прицеливанием
-            if (player.ActiveVehicle.authority)
+            if (player.ActiveVehicle.isOwned)
             {
                 player.ActiveVehicle.NetAimPoint =
                     TraceAimPointWithoutPlayerVehicle(

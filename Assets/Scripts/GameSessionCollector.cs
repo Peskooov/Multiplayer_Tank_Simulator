@@ -16,20 +16,10 @@ public class GameSessionCollector : NetworkBehaviour
     [Client]
     public void RpcOnAddPlayer()
     {
-        if (Player.Local == null)
-            StartCoroutine(DelayPlayerConnect());
-        else
+        if (Player.Local != null)
+        { 
             Player.Local.VehicleSpawned += OnPlayerVehicleSpawned;
-    }
-
-    IEnumerator DelayPlayerConnect()
-    {
-        while (Player.Local == null)
-        {
-            yield return new WaitForSeconds(1f);
         }
-        
-        Player.Local.VehicleSpawned += OnPlayerVehicleSpawned;
     }
     
     private void OnPlayerVehicleSpawned(Vehicle vehicle)

@@ -29,17 +29,7 @@ public class Vehicle :  Destructible
     }
 
     [SyncVar] private Vector3 netAimPoint;
-
-   /* public Vector3 NetAimPoint
-    {
-        get => netAimPoint;
-
-        set
-        {
-            netAimPoint = value; //client local
-            CmdSetNetAimPoint(value); //server
-        }
-    }*/
+    
     public Vector3 NetAimPoint
     {
         get => netAimPoint;
@@ -49,7 +39,7 @@ public class Vehicle :  Destructible
             netAimPoint = value; //client local
         
             // Проверяем, имеет ли клиент права на управление объектом
-            if (authority)
+            if (isOwned)
             {
                 CmdSetNetAimPoint(value); //server
             }

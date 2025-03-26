@@ -107,14 +107,12 @@ public class Turret : NetworkBehaviour
             if (Input.GetKeyDown(KeyCode.Alpha1)) // Клавиша 1
             {
                 projectileIndex = 0;
-                Debug.Log("Switched to projectile 1");
-                
+      
                 RpcAmmoChanged();
             }
             else if (Input.GetKeyDown(KeyCode.Alpha2)) // Клавиша 2
             {
                 projectileIndex = 1;
-                Debug.Log("Switched to projectile 2");
                 
                 RpcAmmoChanged();
             }

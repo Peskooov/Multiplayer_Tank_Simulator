@@ -155,7 +155,7 @@ public class TrackTank : Vehicle
 
     private void FixedUpdate()
     {
-        if (authority)
+        if (isOwned)
         {
             UpdateMotorTorque();
             

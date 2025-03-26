@@ -24,16 +24,6 @@ public class Destructible : NetworkBehaviour
     private void T(NetworkIdentity oldValue, NetworkIdentity newValue)
     {
     }
-    
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            ChangeHitPoint(currentHitPoint, currentHitPoint -5);
-        }
-    }
-
-    
 
     public override void OnStartServer()
     {

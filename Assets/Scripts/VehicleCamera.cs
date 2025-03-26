@@ -177,5 +177,6 @@ public class VehicleCamera : MonoBehaviour
     public void SetTarget(Vehicle setTarget)
     {
         vehicle = setTarget;
+        Debug.Log(vehicle);
     }
 }
