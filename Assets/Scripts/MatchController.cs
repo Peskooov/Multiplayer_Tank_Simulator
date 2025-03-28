@@ -20,6 +20,8 @@ public class MatchController : NetworkBehaviour
     
     [SyncVar] private bool isMatchActive; 
     public bool IsMatchActive => isMatchActive;
+
+    public int WinTeamID = -1;
     
     private IMatchCondition[] matchConditions;
 
@@ -84,13 +86,27 @@ public class MatchController : NetworkBehaviour
         foreach (IMatchCondition matchCondition in matchConditions)
         {
             matchCondition.OnServerMatchEnd(this);
+
+            if (matchCondition is ConditionTeamDeathMatch)
+            {
+                WinTeamID = (matchCondition as ConditionTeamDeathMatch).WinTeamID;
+            }
+
+            if (matchCondition is ConditionCaptureBase)
+            {
+                if((matchCondition as ConditionCaptureBase).RedBaseCaptureLevel >= 100)
+                    WinTeamID = TeamSide.TeamBlue;
+                
+                if((matchCondition as ConditionCaptureBase).BlueBaseCaptureLevel >= 100)
+                    WinTeamID = TeamSide.TeamRed;
+            }
         }
         
         isMatchActive = false;
         
         SvMatchEnd?.Invoke();
         
-        RpcMatchEnd();
+        RpcMatchEnd(WinTeamID);
     }
 
     [ClientRpc]
@@ -100,8 +116,9 @@ public class MatchController : NetworkBehaviour
     }
     
     [ClientRpc]
-    public void RpcMatchEnd()
+    public void RpcMatchEnd(int winTeamID)
     {
+        WinTeamID = winTeamID;
         MatchEnd?.Invoke();
     }
 }
