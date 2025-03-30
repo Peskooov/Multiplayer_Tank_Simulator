@@ -7,12 +7,6 @@ public class UICaptureBase : MonoBehaviour
     
     [SerializeField] private Slider localSlider;
     [SerializeField] private Slider otherSlider;
-    
-    private void Start()
-    {
-        localSlider.maxValue = 100;
-        otherSlider.maxValue = 100;
-    }
 
     private void Update()
     {
@@ -33,7 +27,7 @@ public class UICaptureBase : MonoBehaviour
 
     private void UpdateSlider(Slider slider, float value)
     {
-        if (value <= 0)
+        if (value == 0)
         {
             slider.gameObject.SetActive(false);
         }
@@ -42,9 +36,9 @@ public class UICaptureBase : MonoBehaviour
             if (slider.gameObject.activeSelf == false)
             {
                 slider.gameObject.SetActive(true);
-                    
-                slider.value = value;
             }
+            
+            slider.value = value;
         }
     }
 }

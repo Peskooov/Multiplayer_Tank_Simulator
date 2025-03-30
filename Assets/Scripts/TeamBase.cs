@@ -9,7 +9,7 @@ using UnityEngine.Serialization;
 public class TeamBase : MonoBehaviour
 {
     [SerializeField] private float captureLevel;
-    [FormerlySerializedAs("captureAmountPerSecond")] [SerializeField] private float captureAmountPerVehicle;
+    [SerializeField] private float captureAmountPerVehicle;
     [SerializeField] private int teamID;
 
     public float CaptureLevel => captureLevel;
@@ -28,13 +28,13 @@ public class TeamBase : MonoBehaviour
                 if (allVehicles[i].HitPoint > 0)
                 {
                     isAllDead = false;
-
+                    
                     captureLevel += captureAmountPerVehicle * Time.deltaTime;
                     captureLevel = Mathf.Clamp(captureLevel, 0, 100);
                 }
             }
 
-            if (isAllDead || allVehicles.Count == 0) 
+            if (allVehicles.Count == 0 || isAllDead) 
                 captureLevel = 0;
         }
     }

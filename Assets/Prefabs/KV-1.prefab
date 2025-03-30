@@ -8178,57 +8178,9 @@ MonoBehaviour:
   syncInterval: 0
   maxHitPoints: 480
   destroySFX: {fileID: 0}
-  OnDestroy:
+  OnDestroed:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 9027431647513236064}
-        m_TargetAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
-        m_MethodName: set_isKinematic
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 942339097247665}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 5030622442570305750}
-        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
-        m_MethodName: set_enabled
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 724373029305026589}
-        m_TargetAssemblyTypeName: UnityEngine.Behaviour, UnityEngine
-        m_MethodName: set_enabled
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   Owner: {fileID: 0}
   maxLinearVelocity: 30
   engineSound: {fileID: 575386027191333412}
@@ -8340,7 +8292,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     duration: 5
-  maxForwardMotorTorque: 7000
+  maxForwardMotorTorque: 9000
   backwardTorqueCurve:
     curve:
       serializedVersion: 2
@@ -8385,12 +8337,12 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     duration: 5
-  maxBackwardMotorTorque: 3500
+  maxBackwardMotorTorque: 6000
   breakTorque: 75000
   rollingResistance: 50000
-  rotateTorqueInPlace: 5000
+  rotateTorqueInPlace: 7000
   rotateBreakInPlace: 500
-  rotateTorqueInMotion: 7000
+  rotateTorqueInMotion: 8000
   rotateBreakInMotion: 700
   minSidewayStiffnessInPlace: 0.1
   minSidewayStiffnessInMotion: 0.2

@@ -13,24 +13,27 @@ public class UIAmmoText : MonoBehaviour
     
     private void Start()
     {
+        if(NetworkSessionManager.Events != null)
         NetworkSessionManager.Events.PlayerVehicleSpawned += OnPlayerVehicleSpawned;
-
+        else
+        {
+            StartCoroutine(WaitEvents());
+        }
     }
-    
-    IEnumerator LateSubscribe()
+
+    IEnumerator WaitEvents()
     {
-        while (NetworkSessionManager.Events.PlayerVehicleSpawned == null)
+        while (NetworkSessionManager.Events == null)
         {
             yield return new WaitForSeconds(1f);
+            
         }
-        
         NetworkSessionManager.Events.PlayerVehicleSpawned += OnPlayerVehicleSpawned;
     }
-
     private void OnDestroy()
     {
-        if (NetworkSessionManager.Events.PlayerVehicleSpawned != null)
-            NetworkSessionManager.Events.PlayerVehicleSpawned -= OnPlayerVehicleSpawned;
+        //if (NetworkSessionManager.Events.PlayerVehicleSpawned != null)
+         //   NetworkSessionManager.Events.PlayerVehicleSpawned -= OnPlayerVehicleSpawned;
 
         if (turret != null)
             turret.OnAmmoChanged -= OnAmmoChanged;

@@ -21,8 +21,6 @@ public class NetworkSessionManager : NetworkManager
 
   public override void OnServerConnect(NetworkConnectionToClient conn)
   {
-      Debug.Log("OnServerConnect");
-      
       base.OnServerConnect(conn);
       
       gameSessionCollector.SvOnAddPlayer();

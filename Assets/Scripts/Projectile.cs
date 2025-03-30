@@ -1,4 +1,5 @@
 using System;
+using Mirror;
 using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -21,7 +22,9 @@ public class Projectile : MonoBehaviour
     private Transform parent;
     
     private float RayAdvance = 1.1f;
-    
+
+    public NetworkIdentity Owner { get; set; } // Player
+
     private void Start()
     {
         Destroy(gameObject, lifeTime);
@@ -53,6 +56,19 @@ public class Projectile : MonoBehaviour
                     float dng = damage + Random.Range(-damageScatter, damageScatter) * damage;
                 
                     destructible.SvApplyDamage((int)dng);
+
+                    if (destructible.HitPoint <= 0)
+                    {
+                        if (Owner != null)
+                        {
+                            Player player = Owner.GetComponent<Player>();
+
+                            if (player != null)
+                            {
+                                player.Frags++;
+                            }
+                        }
+                    }
                 }
             }
             

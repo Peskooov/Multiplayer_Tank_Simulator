@@ -57,13 +57,13 @@ public class ConditionTeamDeathMatch : MonoBehaviour,IMatchCondition
         if (red <= 0)
         {
             red = 0;
-            winTeamID = 0;
+            winTeamID = 1;
             isTriggered = true;
         }
         else if (blue <= 0)
         {
             blue = 0;
-            winTeamID = 1;
+            winTeamID = 0;
             isTriggered = true;
         }
         

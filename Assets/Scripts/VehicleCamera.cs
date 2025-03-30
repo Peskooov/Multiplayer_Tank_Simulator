@@ -31,6 +31,7 @@ public class VehicleCamera : MonoBehaviour
     [SerializeField] private float zoomMaxVerticalAngle; 
     
     private new Camera camera;
+    public Camera Camera => camera;
     private Vector2 rotationControl;
 
     private float deltaRotationX;
