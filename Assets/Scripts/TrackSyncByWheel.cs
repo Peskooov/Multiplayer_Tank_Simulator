@@ -26,7 +26,12 @@ public class TrackSyncByWheel : MonoBehaviour
     {
         for (int i = 0; i < syncPoints.Length; i++)
         {
-            syncPoints[i].bone.position = syncPoints[i].mesh.position + syncPoints[i].offset;
+            Vector3 meshPosition = syncPoints[i].mesh.position + syncPoints[i].offset;
+            syncPoints[i].bone.position = new Vector3(
+                syncPoints[i].bone.position.x, // сохраняем оригинальный X
+                meshPosition.y,                // применяем новый Y
+                syncPoints[i].bone.position.z  // сохраняем оригинальный Z
+            );
         }
     }
 }

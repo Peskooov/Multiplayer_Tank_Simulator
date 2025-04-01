@@ -8,27 +8,44 @@ public class UICannonAim : MonoBehaviour
     [SerializeField] private Image aim;
     [SerializeField] private Image reloadSlider;
     
-    private Vector3 aimPosition;
     [SerializeField] private Camera mainCamera;
+    [SerializeField] private float smoothSpeed = 10f; // Добавлен параметр сглаживания
     
+    private Vector3 aimPosition;
+    private Vector3 aimScreenPosition;
+    private Vector3 currentVelocity;
     private void Update()
     { 
         if (Player.Local == null || Player.Local.ActiveVehicle == null)
             return;
-
+        
+        
         Vehicle vehicle = Player.Local.ActiveVehicle;
         
+        // Обновление полоски перезарядки
         reloadSlider.fillAmount = vehicle.Turret.FireTimerNormalized; 
         
-        aimPosition = VehicleInputControl.TraceAimPointWithoutPlayerVehicle(vehicle.Turret.LaunchPoint.position,
+        // Получение точки прицеливания
+        Vector3 worldAimPoint = VehicleInputControl.TraceAimPointWithoutPlayerVehicle(
+            vehicle.Turret.LaunchPoint.position,
             vehicle.Turret.LaunchPoint.forward);
 
-        Vector3 result = mainCamera.WorldToScreenPoint(aimPosition);
-
-        if (result.z > 0)
+        // Конвертация в экранные координаты
+        Vector3 screenPoint = mainCamera.WorldToScreenPoint(worldAimPoint);
+        
+        // Проверка, находится ли точка перед камерой
+        if(screenPoint.z > 0)
         {
-            result.z = 0;
-            aim.transform.position = result;
+            // Сглаживание движения прицела
+            aimScreenPosition = Vector3.SmoothDamp(
+                aimScreenPosition, 
+                screenPoint, 
+                ref currentVelocity, 
+                smoothSpeed * Time.deltaTime);
+            
+            aim.transform.position = aimScreenPosition;
         }
+        
+        //aim.gameObject.SetActive(screenPoint.z > 0);
     }
 }

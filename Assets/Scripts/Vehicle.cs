@@ -1,3 +1,4 @@
+using System;
 using Mirror;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -8,7 +9,11 @@ public class Vehicle :  Destructible
     
     [Header("Engine Sound")] 
     [SerializeField] private AudioSource engineSound;
-    [SerializeField] private float enginePitchModifier;
+    [SerializeField] private float enginePitchModifier = 0.5f;
+    [SerializeField] private float minEngineVolume = 0.3f;
+    [SerializeField] private float maxEngineVolume = 1f;
+    [SerializeField] private float idlePitch = 0.8f;
+    [SerializeField] private float maxPitch = 1.5f;
 
     [Header("Zoom")] 
     [SerializeField] protected Transform zoomOpticPosition;
@@ -45,7 +50,18 @@ public class Vehicle :  Destructible
             }
         }
     }
-    
+
+
+    private void Start()
+    {
+        if (engineSound != null)
+        {
+            engineSound.loop = true;
+            engineSound.playOnAwake = false;
+            engineSound.volume = minEngineVolume;
+            engineSound.pitch = idlePitch;
+        }
+    }
 
     public void Fire()
     {
@@ -92,7 +108,10 @@ public class Vehicle :  Destructible
     {
         if (engineSound != null)
         {
-            if (NormalizedLinearVelocity > 0.01f)
+            float currentSpeed = LinearVelocity;
+            float normalizedSpeed = Mathf.Clamp01(currentSpeed / maxLinearVelocity);
+
+            if (normalizedSpeed > 0.01f)
             {
                 // Если звук не воспроизводится, запускаем его
                 if (!engineSound.isPlaying)
@@ -100,16 +119,17 @@ public class Vehicle :  Destructible
                     engineSound.Play();
                 }
 
-                // Обновляем параметры звука
-                engineSound.pitch = 1f + enginePitchModifier * NormalizedLinearVelocity;
-                engineSound.volume = 0.5f + NormalizedLinearVelocity;
+                // Плавное изменение тона и громкости
+                engineSound.pitch = Mathf.Lerp(idlePitch, maxPitch, normalizedSpeed);
+                engineSound.volume = Mathf.Lerp(minEngineVolume, maxEngineVolume, normalizedSpeed);
             }
             else
             {
-                // Если транспортное средство не движется, останавливаем звук
+                // Режим холостого хода
                 if (engineSound.isPlaying)
                 {
-                    engineSound.Stop();
+                    engineSound.pitch = Mathf.Lerp(engineSound.pitch, idlePitch, Time.deltaTime);
+                    engineSound.volume = Mathf.Lerp(engineSound.volume, minEngineVolume, Time.deltaTime);
                 }
             }
         }
