@@ -4,34 +4,30 @@ using UnityEngine.Events;
 
 public class Destructible : NetworkBehaviour
 {
-    [SerializeField] private int maxHitPoints;
-    [SerializeField] private GameObject destroySFX;
+    public event UnityAction<Destructible> Destroyed;
+    public event UnityAction<Destructible> Recovered;
+    public event UnityAction<int> HitPointChanged;
 
-    [SerializeField] private UnityEvent<Destructible> OnDestroed;
-    public UnityEvent<Destructible> OnEventDeath => OnDestroed;
-    
-    public UnityAction<int> HitPointChange;
+    [SerializeField] private UnityEvent eventDestroyed;
+    [SerializeField] private UnityEvent eventRecovered;
 
-    public int MaxHitPoints => maxHitPoints;    
-    
+    [SerializeField] private int maxHitPoint;
+    [SerializeField] private int currentHitPoint;
+
+    public int MaxHitPoint => maxHitPoint;
     public int HitPoint => currentHitPoint;
-    private int currentHitPoint;
-    
-    [SyncVar( hook = nameof(ChangeHitPoint) )]
+
+    [SyncVar(hook = nameof(SyncHitPoint))]
     private int syncCurrentHitPoint;
 
-    [SyncVar( hook = "T")] 
-    public NetworkIdentity Owner;
-    private void T(NetworkIdentity oldValue, NetworkIdentity newValue)
-    {
-    }
+    #region Server
 
     public override void OnStartServer()
     {
         base.OnStartServer();
 
-        syncCurrentHitPoint = maxHitPoints;
-        currentHitPoint = maxHitPoints;
+        syncCurrentHitPoint = maxHitPoint;
+        currentHitPoint = maxHitPoint;
     }
 
     [Server]
@@ -41,33 +37,41 @@ public class Destructible : NetworkBehaviour
 
         if (syncCurrentHitPoint <= 0)
         {
-            if (destroySFX != null)
-            {
-                GameObject sfx = Instantiate(destroySFX, transform.position, Quaternion.identity);
-                NetworkServer.Spawn(sfx);
-            }
-
             syncCurrentHitPoint = 0;
-            
+
             RpcDestroy();
         }
     }
 
+    [Server]
+    protected void SvRecovery()
+    {
+        syncCurrentHitPoint = maxHitPoint;
+        currentHitPoint = maxHitPoint;
+
+        RpcRecovery();
+    }
+    #endregion
+
+    #region Client
+    private void SyncHitPoint(int oldValue, int newValue)
+    {
+        currentHitPoint = newValue;
+        HitPointChanged?.Invoke(newValue);
+    }
+    
     [Client]
     private void RpcDestroy()
     {
-        OnDestructibleDestroy();
-    }
-
-    protected virtual void OnDestructibleDestroy()
-    {
-        OnDestroed?.Invoke(this);
+        Destroyed?.Invoke(this);
+        eventDestroyed?.Invoke();
     }
     
-    private void ChangeHitPoint(int oldValue, int newValue)
+    [Client]
+    private void RpcRecovery()
     {
-        currentHitPoint = newValue;
-        HitPointChange?.Invoke(newValue);
+        Recovered?.Invoke(this);
+        eventRecovered?.Invoke();
     }
+    #endregion
 }
-

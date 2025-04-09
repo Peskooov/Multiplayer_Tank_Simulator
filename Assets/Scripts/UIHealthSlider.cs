@@ -16,8 +16,8 @@ public class UIHealthSlider : MonoBehaviour
     {
         this.destructible = destructible;
 
-        destructible.HitPointChange += OnHitPointChange;
-        slider.maxValue = destructible.MaxHitPoints;
+        destructible.HitPointChanged += OnHitPointChanged;
+        slider.maxValue = destructible.MaxHitPoint;
         slider.value = slider.maxValue;
 
         if (localPlayerTeamID == destructibleTeamID)
@@ -34,10 +34,10 @@ public class UIHealthSlider : MonoBehaviour
     {
         if (destructible == null) return;
 
-        destructible.HitPointChange -= OnHitPointChange;
+        destructible.HitPointChanged -= OnHitPointChanged;
     }
 
-    private void OnHitPointChange(int value)
+    private void OnHitPointChanged(int value)
     {
         slider.value = destructible.HitPoint;
     }

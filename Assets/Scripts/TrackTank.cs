@@ -151,8 +151,15 @@ public class TrackTank : Vehicle
     {
         rigidBody = GetComponent<Rigidbody>();
         rigidBody.centerOfMass = centerOfMass.localPosition;
+
+        Destroyed += OnTrackTankDestroyed;
     }
 
+    private void OnDestroy()
+    {
+        Destroyed -= OnTrackTankDestroyed;
+    }
+    
     private void FixedUpdate()
     {
         if (isOwned)
@@ -162,6 +169,16 @@ public class TrackTank : Vehicle
             CmdUpdateWheelRpm(LeftWheelRPM,RightWheelRPM);
         }
     }
+    
+    private void OnTrackTankDestroyed(Destructible arg0)
+    {
+        GameObject ruinedTank = Instantiate(destroyedTank);
+        ruinedTank.transform.position = visualModel.transform.position;
+        ruinedTank.transform.rotation = visualModel.transform.rotation;
+        
+        visualModel.SetActive(false);
+    }
+
 
     [Command]
     private void CmdUpdateWheelRpm(float leftRpm, float rightRpm)
@@ -184,7 +201,6 @@ public class TrackTank : Vehicle
         leftWheelRow.UpdateMeshRotationByRPM(leftRpm);
         rightWheelRow.UpdateMeshRotationByRPM(rightRpm);
     }
-    
     
     private void UpdateMotorTorque()
     {
@@ -290,16 +306,5 @@ public class TrackTank : Vehicle
         
         leftWheelRow.UpdateMeshTransform();
         rightWheelRow.UpdateMeshTransform();
-    }
-
-    protected override void OnDestructibleDestroy()
-    {
-        base.OnDestructibleDestroy();
-
-        GameObject ruinedTank = Instantiate(destroyedTank);
-        ruinedTank.transform.position = visualModel.transform.position;
-        ruinedTank.transform.rotation = visualModel.transform.rotation;
-        
-        visualModel.SetActive(false);
     }
 }

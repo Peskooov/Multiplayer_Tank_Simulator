@@ -4,10 +4,5 @@ using UnityEngine;
 
 public class Tir : Destructible
 {
-    protected override void OnDestructibleDestroy()
-    {
-        base.OnDestructibleDestroy();
-        
-        Destroy(gameObject);
-    }
+   
 }

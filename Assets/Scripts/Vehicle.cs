@@ -21,6 +21,12 @@ public class Vehicle :  Destructible
 
     public Turret Turret;
     
+    [SyncVar(hook = "T")] public NetworkIdentity Owner;
+
+    private void T(NetworkIdentity oldValue, NetworkIdentity newValue)
+    {
+    }
+    
     public virtual float LinearVelocity => 0;
     
     public float NormalizedLinearVelocity

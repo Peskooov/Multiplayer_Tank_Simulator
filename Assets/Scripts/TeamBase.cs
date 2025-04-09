@@ -48,7 +48,7 @@ public class TeamBase : MonoBehaviour
         if (allVehicles.Contains(vehicle)) return;
         if (vehicle.Owner.GetComponent<Player>().TeamID == teamID) return;
 
-        vehicle.HitPointChange += OnHitPointChange;
+        vehicle.HitPointChanged += OnHitPointChanged;
         allVehicles.Add(vehicle);
     }
 
@@ -58,7 +58,7 @@ public class TeamBase : MonoBehaviour
         
         if (vehicle == null) return;
 
-        vehicle.HitPointChange -= OnHitPointChange;
+        vehicle.HitPointChanged -= OnHitPointChanged;
         allVehicles.Remove(vehicle);
     }
     
@@ -68,13 +68,13 @@ public class TeamBase : MonoBehaviour
 
         for (int i = 0; i < allVehicles.Count; i++)
         {
-            allVehicles[i].HitPointChange -= OnHitPointChange;
+            allVehicles[i].HitPointChanged -= OnHitPointChanged;
         }
         
         allVehicles.Clear();
     }
     
-    private void OnHitPointChange(int value)
+    private void OnHitPointChanged(int value)
     {
         captureLevel = 0;
     } 

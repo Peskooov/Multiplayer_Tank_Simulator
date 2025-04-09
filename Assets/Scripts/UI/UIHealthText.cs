@@ -16,14 +16,14 @@ public class UIHealthText : MonoBehaviour
     private void OnDestroy()
     {
         if (destructible != null)
-            destructible.HitPointChange -= OnHitPointChanged;
+            destructible.HitPointChanged -= OnHitPointChanged;
     }
 
     private void OnPlayerVehicleSpawned(Vehicle vehicle)
     {
         destructible = vehicle;
  
-        destructible.HitPointChange += OnHitPointChanged;
+        destructible.HitPointChanged += OnHitPointChanged;
         text.text = destructible.HitPoint.ToString();
     }
 
