@@ -2,56 +2,56 @@ using System;
 using Mirror;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 public class Turret : NetworkBehaviour
 {
+    public event UnityAction<int> UpdateSelectedAmmunition;
+    
     [SerializeField] protected Transform launchPoint;
     public Transform LaunchPoint => launchPoint;
     
     [SerializeField] private float fireRate;
 
-    [SerializeField] protected Projectile[] projectilePrefab;
-    public Projectile[] ProjectilePrefab => projectilePrefab;
-
-    protected int projectileIndex;
-    public int ProjectileIndex => projectileIndex;
+    [SerializeField] protected Ammunition[] ammunition;
+    public Ammunition[] Ammunition => ammunition;
     
     private float fireTimer;
     public float FireTimerNormalized => fireTimer / fireRate;
-
+    
+    public ProjectileProperties SelectedProjectile => Ammunition[syncSelectedAmmunitionIndex].ProjectileProp;
+    
     [SyncVar]
-    [SerializeField] protected int[] ammoCount;
-    public int AmmoCount => ammoCount[projectileIndex];
+    [SerializeField] private int syncSelectedAmmunitionIndex;
+    public int SelectedAmmunitionIndex => syncSelectedAmmunitionIndex;
 
-    public UnityAction<int> OnAmmoChanged;
-
-    private void Awake()
-    {
-        projectileIndex = 0;
-    }
-
-    [Server]
-    public void SvAddAmmo(int count)
-    { 
-        ammoCount[projectileIndex] += count;
+    protected virtual void OnFire() { }
     
-        RpcAmmoChanged();
-    }
-    
-    [Server]
-    protected virtual bool SvDrawAmmo(int count)
+    public void SetSelectedProjectile(int index)
     {
-        if (ammoCount[projectileIndex] <= 0) return false;
-
-        if (ammoCount[projectileIndex] >= count)
-        {
-            ammoCount[projectileIndex] -= count;
-            RpcAmmoChanged();
-
-            return true;
-        }
+        if(!isOwned) return;
+        if(index <0 || index > ammunition.Length) return;
         
-        return false;
+        syncSelectedAmmunitionIndex = index;
+        
+        if(isClient)
+            CmdReloadAmmunition();
+        
+        UpdateSelectedAmmunition?.Invoke(index);
+    }
+    
+    public void Fire()
+    {
+        if(!isOwned) return;
+        
+        if(isClient)
+            CmdFire();
+    }
+
+    [Command]
+    private void CmdReloadAmmunition()
+    {
+        fireTimer = fireRate;
     }
 
     [Command]
@@ -59,7 +59,7 @@ public class Turret : NetworkBehaviour
     {
         if(fireTimer>0) return;
         
-        if(!SvDrawAmmo(1)) return;
+        if(!ammunition[syncSelectedAmmunitionIndex].SvDrawAmmo(1)) return;
         
         OnFire();
 
@@ -77,26 +77,7 @@ public class Turret : NetworkBehaviour
         
         OnFire();
     }
-
-    [ClientRpc]
-    private void RpcAmmoChanged()
-    {
-        OnAmmoChanged?.Invoke(ammoCount[projectileIndex]);
-    }
-    
-    protected virtual void OnFire()
-    {
-        
-    }
-
-    public void Fire()
-    {
-        if(!isOwned) return;
-        
-        if(isClient)
-            CmdFire();
-    }
-
+     
     protected virtual void Update()
     {
         if (fireTimer > 0)
@@ -106,15 +87,15 @@ public class Turret : NetworkBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Alpha1)) // Клавиша 1
             {
-                projectileIndex = 0;
+                //projectileIndex = 0;
       
-                RpcAmmoChanged();
+                    //RpcAmmoChanged();
             }
             else if (Input.GetKeyDown(KeyCode.Alpha2)) // Клавиша 2
             {
-                projectileIndex = 1;
+                //projectileIndex = 1;
                 
-                RpcAmmoChanged();
+                //RpcAmmoChanged();
             }
         }
     }

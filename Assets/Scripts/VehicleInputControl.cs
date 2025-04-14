@@ -13,34 +13,21 @@ public class VehicleInputControl : MonoBehaviour
  
     protected virtual void Update()
     {
-        // Проверяем, что игрок и его транспортное средство существуют
         if (player == null || player.ActiveVehicle == null) return;
-
-        // Убедимся, что управление происходит только для локального игрока
-        if (player.isLocalPlayer)
+        
+        if (player.isOwned && player.isLocalPlayer)
         {
-            // Управление движением
-            player.ActiveVehicle.SetTargetControl(new Vector3(
-                Input.GetAxis("Horizontal"),
-                Input.GetAxis("Jump"),
-                Input.GetAxis("Vertical")
-            ));
-
-            // Управление прицеливанием
-            if (player.ActiveVehicle.isOwned)
-            {
-                player.ActiveVehicle.NetAimPoint =
-                    TraceAimPointWithoutPlayerVehicle(
-                        VehicleCamera.Instance.transform.position,
-                        VehicleCamera.Instance.transform.forward
-                    );
-            }
-
-            // Обработка выстрела
+            player.ActiveVehicle.SetTargetControl(new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Jump"),Input.GetAxis("Vertical")));
+            player.ActiveVehicle.NetAimPoint =TraceAimPointWithoutPlayerVehicle(VehicleCamera.Instance.transform.position,VehicleCamera.Instance.transform.forward);
+            
             if (Input.GetMouseButtonDown(0))
             {
                 player.ActiveVehicle.Fire();
             }
+
+            if (Input.GetKeyDown(KeyCode.Alpha1)) player.ActiveVehicle.Turret.SetSelectedProjectile(0);
+            if (Input.GetKeyDown(KeyCode.Alpha2)) player.ActiveVehicle.Turret.SetSelectedProjectile(1);
+            if (Input.GetKeyDown(KeyCode.Alpha3)) player.ActiveVehicle.Turret.SetSelectedProjectile(2);
         }
     }
 

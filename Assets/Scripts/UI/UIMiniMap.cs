@@ -40,11 +40,12 @@ public class UIMiniMap : MonoBehaviour
     
     private void OnDestroy()
     {
-        if (NetworkSessionManager.Match == null) return;
-        
+        if (NetworkSessionManager.Instance != null && NetworkSessionManager.Match != null)
+        {
             NetworkSessionManager.Match.MatchStart -= OnMatchStart;
             NetworkSessionManager.Match.MatchEnd -= OnMatchEnd;
-        
+        }
+
     }
 
     private void Update()

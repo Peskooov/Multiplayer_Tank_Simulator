@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Subcaliber
   m_EditorClassIdentifier: 
   type: 2
-  projectilePrefab: {fileID: 0}
-  icon: {fileID: 0}
+  projectilePrefab: {fileID: 1255542908695686924, guid: 1a7241b4351431f44bfefd3454b94772, type: 3}
+  icon: {fileID: 21300000, guid: 5f7be324c988b5e42929835c98dfe893, type: 3}
   velocity: 0
   mass: 0
   impactForce: 0

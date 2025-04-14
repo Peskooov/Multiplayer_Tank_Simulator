@@ -3,7 +3,7 @@ using System.Collections;
 using TMPro;
 
 public class UIAmmoText : MonoBehaviour
-{
+{/*
     [SerializeField] private TMP_Text text;
     [SerializeField] private Transform selectImage;
     [SerializeField] private Transform firstProjectile;
@@ -36,14 +36,14 @@ public class UIAmmoText : MonoBehaviour
          //   NetworkSessionManager.Events.PlayerVehicleSpawned -= OnPlayerVehicleSpawned;
 
         if (turret != null)
-            turret.OnAmmoChanged -= OnAmmoChanged;
+            turret.AmmoChanged -= OnAmmoChanged;
     }
 
     private void OnPlayerVehicleSpawned(Vehicle vehicle)
     {
         turret = vehicle.Turret;
         
-        turret.OnAmmoChanged += OnAmmoChanged;
+        turret.AmmoChanged += OnAmmoChanged;
         text.text = turret.AmmoCount.ToString();
     }
 
@@ -52,5 +52,5 @@ public class UIAmmoText : MonoBehaviour
         text.text = Player.Local.ActiveVehicle.Turret.AmmoCount.ToString();
         
         selectImage.transform.position = turret.ProjectileIndex == 0 ? firstProjectile.position + new Vector3(0,15,0) : secondProjectile.position+ new Vector3(0,15,0);
-    }
+    }*/
 }

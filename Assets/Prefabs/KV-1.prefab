@@ -8303,6 +8303,9 @@ GameObject:
   - component: {fileID: 5778363039297142250}
   - component: {fileID: 8944598644966393415}
   - component: {fileID: 1844684313602392173}
+  - component: {fileID: 6730973623314384884}
+  - component: {fileID: 7720051124259785246}
+  - component: {fileID: 1230813778136618283}
   m_Layer: 0
   m_Name: KV-1
   m_TagString: Untagged
@@ -8374,12 +8377,14 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxHitPoints: 480
-  destroySFX: {fileID: 0}
-  OnDestroed:
+  eventDestroyed:
     m_PersistentCalls:
       m_Calls: []
-  Owner: {fileID: 0}
+  eventRecovered:
+    m_PersistentCalls:
+      m_Calls: []
+  maxHitPoint: 0
+  currentHitPoint: 0
   maxLinearVelocity: 30
   engineSound: {fileID: 575386027191333412}
   enginePitchModifier: 0
@@ -8389,6 +8394,7 @@ MonoBehaviour:
   maxPitch: 1.5
   zoomOpticPosition: {fileID: 965038686874381393}
   Turret: {fileID: 724373029305026589}
+  Owner: {fileID: 0}
   visualModel: {fileID: 5817250917361345546}
   destroyedTank: {fileID: 9190742538609179735, guid: 70ef47a57e898594da39cedececed95e, type: 3}
   centerOfMass: {fileID: 9046036983190128799}
@@ -8566,10 +8572,11 @@ MonoBehaviour:
   syncInterval: 0
   launchPoint: {fileID: 8955029554937941021}
   fireRate: 5
-  projectilePrefab:
-  - {fileID: 1255542908695686924, guid: 1a7241b4351431f44bfefd3454b94772, type: 3}
-  - {fileID: 1255542908695686924, guid: 957736cd0a65bbc4cbef9edc025b0639, type: 3}
-  ammoCount: 0500000007000000
+  ammunition:
+  - {fileID: 6730973623314384884}
+  - {fileID: 7720051124259785246}
+  - {fileID: 1230813778136618283}
+  syncSelectedAmmunitionIndex: 0
   tower: {fileID: 1449457900255757038}
   mask: {fileID: 3185492913762677815}
   spreadAngle: 1
@@ -8668,6 +8675,57 @@ MonoBehaviour:
   rotationSensitivity: 0.01
   positionPrecision: 0.01
   scalePrecision: 0.01
+--- !u!114 &6730973623314384884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2768335471280565170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fa0931907574f14089bbbe0bc7f20ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  projectileProp: {fileID: 11400000, guid: 34618dd3a51569942b52bd8c9d877c2a, type: 2}
+  syncAmmoCount: 15
+--- !u!114 &7720051124259785246
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2768335471280565170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fa0931907574f14089bbbe0bc7f20ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  projectileProp: {fileID: 11400000, guid: 73e778ff7d7f96a4e8abce4fa73fadd4, type: 2}
+  syncAmmoCount: 5
+--- !u!114 &1230813778136618283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2768335471280565170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fa0931907574f14089bbbe0bc7f20ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  projectileProp: {fileID: 11400000, guid: 74ddb8c1bc9dc124eafc6194a26054a0, type: 2}
+  syncAmmoCount: 5
 --- !u!1 &2830147535013514174
 GameObject:
   m_ObjectHideFlags: 0
