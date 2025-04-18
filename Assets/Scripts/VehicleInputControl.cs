@@ -47,7 +47,7 @@ public class VehicleInputControl : MonoBehaviour
         // Игнорируем попадание в транспортное средство локального игрока
         foreach (var hit in hits)
         {
-            if (hit.rigidbody == rb) continue;
+            if (hit.rigidbody == rb || hit.collider.isTrigger) continue;
 
             return hit.point;
         }

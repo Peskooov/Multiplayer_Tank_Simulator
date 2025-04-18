@@ -5,6 +5,8 @@ public enum ProjectileHitType
     Penetration,
     NonPenetration, 
     Ricochet,
+    ModulePenetration,
+    ModuleNoPenetration,
     Environment
 }
 
@@ -80,7 +82,7 @@ public class ProjectileHit : MonoBehaviour
         Debug.DrawRay(raycastHit.point, raycastHit.normal, Color.green);
         Debug.DrawRay(raycastHit.point, projectile.transform.right, Color.yellow);
         
-        if (angle > projectile.Properties.RicochetAngle && projectile.Properties.Caliber < hitArmor.Thickness * 3)
+        if (angle > projectile.Properties.RicochetAngle && projectile.Properties.Caliber < hitArmor.Thickness * 3 && hitArmor.Type == ArmorType.Vehicle)
         {
             hitResult.Type = ProjectileHitType.Ricochet;
         }
@@ -94,12 +96,21 @@ public class ProjectileHit : MonoBehaviour
             hitResult.Type = ProjectileHitType.NonPenetration;
         }
 
-        Debug.LogError($"armor: {hitArmor.Thickness}, reducedArmor: {reducedArmor}, angle: {angle}, norm: {normalization}, penetration: {projectilePenetration} , type:{hitResult.Type}");
+        //Debug.LogError($"armor: {hitArmor.Thickness}, reducedArmor: {reducedArmor}, angle: {angle}, norm: {normalization}, penetration: {projectilePenetration} , type:{hitResult.Type}");
         
         if(hitResult.Type == ProjectileHitType.Penetration)
             hitResult.Damage = projectile.Properties.GetSpreadDamage();
         else
             hitResult.Damage = 0;
+
+        if (hitArmor.Type == ArmorType.Module)
+        {
+            if (hitResult.Type == ProjectileHitType.Penetration)
+                hitResult.Type = ProjectileHitType.ModulePenetration;
+            
+            if (hitResult.Type == ProjectileHitType.NonPenetration)
+                hitResult.Type = ProjectileHitType.ModuleNoPenetration;
+        }
         
         hitResult.Point = raycastHit.point;
         

@@ -23,7 +23,9 @@ public class UIHitResultPanel : MonoBehaviour
 
     private void OnProjectileHit(ProjectileHitResult hitResult)
     {
-        if (hitResult.Type == ProjectileHitType.Environment) 
+        if (hitResult.Type == ProjectileHitType.Environment || 
+            hitResult.Type == ProjectileHitType.ModuleNoPenetration || 
+            hitResult.Type == ProjectileHitType.ModulePenetration) 
             return;
 
         // Создаем и настраиваем попап

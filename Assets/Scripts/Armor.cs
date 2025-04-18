@@ -23,4 +23,9 @@ public class Armor : MonoBehaviour
     {
         transform.SetParent(parent);
     }
+
+    public void SetDestructible(Destructible destructible)
+    {
+        this.destructible = destructible;
+    }
 }

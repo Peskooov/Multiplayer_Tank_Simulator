@@ -40,7 +40,7 @@ public class Projectile : MonoBehaviour
 
             ProjectileHitResult hitResult = hit.GetHitResult();
 
-            if (hitResult.Type == ProjectileHitType.Penetration)
+            if (hitResult.Type == ProjectileHitType.Penetration || hitResult.Type == ProjectileHitType.ModulePenetration)
             {
 
                 SvTakeDamage(hitResult);
@@ -60,6 +60,8 @@ public class Projectile : MonoBehaviour
 
     private void SvAddFrags()
     {
+        if (hit.HitArmor.Type == ArmorType.Vehicle) return;
+
         if (hit.HitArmor.Destructible.HitPoint <= 0)
         {
             if (Owner != null)
@@ -73,7 +75,7 @@ public class Projectile : MonoBehaviour
             }
         }
     }
-    
+
     private void Destroy()
     {
         visualModel.SetActive(false);
