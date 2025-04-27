@@ -37,12 +37,10 @@ public class Projectile : MonoBehaviour
 
         if (NetworkSessionManager.Instance.IsServer)
         {
-
             ProjectileHitResult hitResult = hit.GetHitResult();
 
             if (hitResult.Type == ProjectileHitType.Penetration || hitResult.Type == ProjectileHitType.ModulePenetration)
             {
-
                 SvTakeDamage(hitResult);
                 SvAddFrags();
             }
@@ -54,13 +52,25 @@ public class Projectile : MonoBehaviour
     }
 
     private void SvTakeDamage(ProjectileHitResult result)
-    {
+    { 
+        if (hit == null)
+        {
+            Debug.LogWarning("Something went wrong");
+            return;
+        } /*
+
+        if (hit == null || hit.HitArmor == null || hit.HitArmor.Destructible == null)
+        {
+            Debug.LogWarning("Null");
+            return;
+        }*/
+        
         hit.HitArmor.Destructible.SvApplyDamage((int) result.Damage);
     }
 
     private void SvAddFrags()
     {
-        if (hit.HitArmor.Type == ArmorType.Vehicle) return;
+        if (hit.HitArmor.Type == ArmorType.Module) return;
 
         if (hit.HitArmor.Destructible.HitPoint <= 0)
         {

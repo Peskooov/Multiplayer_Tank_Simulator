@@ -8405,7 +8405,7 @@ MonoBehaviour:
   eventRecovered:
     m_PersistentCalls:
       m_Calls: []
-  maxHitPoint: 0
+  maxHitPoint: 100
   currentHitPoint: 0
   maxLinearVelocity: 30
   engineSound: {fileID: 575386027191333412}
@@ -8769,7 +8769,7 @@ MonoBehaviour:
   eventRecovered:
     m_PersistentCalls:
       m_Calls: []
-  maxHitPoint: 200
+  maxHitPoint: 50
   currentHitPoint: 0
   title: Left Track
   armor: {fileID: 605512467299645980}
@@ -8795,7 +8795,7 @@ MonoBehaviour:
   eventRecovered:
     m_PersistentCalls:
       m_Calls: []
-  maxHitPoint: 200
+  maxHitPoint: 50
   currentHitPoint: 0
   title: Right Track
   armor: {fileID: 5619253894959440972}
@@ -8819,6 +8819,8 @@ MonoBehaviour:
   leftTrackDamageMesh: {fileID: 8153758697266923759}
   rightTrackMesh: {fileID: 1312778494224729507}
   rightTrackDamageMesh: {fileID: 7024508041503503754}
+  tracksFillImage: {fileID: 0}
+  brokenIcon: {fileID: 0}
   leftTrack: {fileID: 6552139572569878685}
   rightTrack: {fileID: 5540284521222068491}
 --- !u!1 &2830147535013514174

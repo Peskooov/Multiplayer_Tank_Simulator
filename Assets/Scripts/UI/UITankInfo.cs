@@ -14,8 +14,6 @@ public class UITankInfo : MonoBehaviour
     {
         tank = vehicle;
         
-        healthSlider.Init(tank, tank.Owner.GetComponent<Player>().TeamID, Player.Local.TeamID);
-        
-        Debug.Log($"Set tank to {tank}");
+        healthSlider.Init(tank.Owner.GetComponent<Player>().TeamID, Player.Local.TeamID);
     }
 }

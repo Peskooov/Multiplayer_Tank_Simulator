@@ -33,6 +33,8 @@ public class UIAmmunitionPanel : MonoBehaviour
 
     private void OnPlayerVehicleSpawned(Vehicle vehicle)
     {
+        ClearAmmunitionUI(); // Очищаем старый UI
+
         turret = vehicle.Turret;
         turret.UpdateSelectedAmmunition += OnTurretUpdateSelectedAmmunition;
 
@@ -41,14 +43,14 @@ public class UIAmmunitionPanel : MonoBehaviour
             UIAmmunitionElement ammunitionElement = Instantiate(ammunitionElementPrefab);
             ammunitionElement.transform.SetParent(ammunitionPanel);
             ammunitionElement.transform.localScale = Vector3.one;
-            
+        
             ammunitionElement.SetAmmunition(turret.Ammunition[i]);
 
             turret.Ammunition[i].AmmoCountChanged += OnAmmoCountChanged;
-            
+        
             allAmmunitionElements.Add(ammunitionElement);
             allAmmunition.Add(turret.Ammunition[i]);
-            
+        
             if (i == 0)
             {
                 ammunitionElement.Select();
@@ -56,6 +58,23 @@ public class UIAmmunitionPanel : MonoBehaviour
         }
     }
 
+    private void ClearAmmunitionUI()
+    {
+        foreach (Transform child in ammunitionPanel)
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach (var ammo in allAmmunition)
+        {
+            if (ammo != null)
+                ammo.AmmoCountChanged -= OnAmmoCountChanged;
+        }
+
+        allAmmunitionElements.Clear();
+        allAmmunition.Clear();
+    }
+    
     private void OnAmmoCountChanged(int count)
     {
         allAmmunitionElements[turret.SelectedAmmunitionIndex].UpdateAmmoCount(count);

@@ -91,7 +91,7 @@ public class ProjectileHit : MonoBehaviour
             hitResult.Type = ProjectileHitType.Penetration;
             
         }
-        else
+        else if (projectilePenetration < reducedArmor)
         {
             hitResult.Type = ProjectileHitType.NonPenetration;
         }

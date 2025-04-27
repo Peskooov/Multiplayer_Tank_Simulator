@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class UIHealthSlider : MonoBehaviour
 {
+    [SerializeField] private UIHealthText uiHealthText;
+    
     [SerializeField] private Slider slider;
     [SerializeField] private Image sliderImages;
 
@@ -12,14 +14,40 @@ public class UIHealthSlider : MonoBehaviour
 
     private Destructible destructible;
 
-    public void Init(Destructible destructible, int destructibleTeamID, int localPlayerTeamID)
+    private void Start()
     {
-        this.destructible = destructible;
+        if (NetworkSessionManager.Events != null)
+        {
+            Debug.LogWarning("NetworkSessionManager");
+        }
+        NetworkSessionManager.Events.PlayerVehicleSpawned += OnPlayerVehicleSpawned;
+    }
+    
+    private void OnDestroy()
+    {
+        if (destructible != null)
+            destructible.HitPointChanged -= OnHitPointChanged;
+    }
+    
+    private void OnPlayerVehicleSpawned(Vehicle vehicle)
+    {
+        destructible = vehicle;
 
         destructible.HitPointChanged += OnHitPointChanged;
         slider.maxValue = destructible.MaxHitPoint;
-        slider.value = slider.maxValue;
+        slider.value = destructible.MaxHitPoint;
+        
+        Debug.Log(destructible.HitPoint + "/" + destructible.MaxHitPoint);
+    }
 
+    private void OnHitPointChanged(int hitPoint)
+    {
+        Debug.Log(hitPoint);
+        slider.value = hitPoint;
+    }
+    
+    public void Init(int destructibleTeamID, int localPlayerTeamID)
+    {
         if (localPlayerTeamID == destructibleTeamID)
         {
             SetLocalTeamColor();
@@ -28,18 +56,6 @@ public class UIHealthSlider : MonoBehaviour
         {
             SetOtherTeamColor();
         }
-    }
-
-    private void OnDestroy()
-    {
-        if (destructible == null) return;
-
-        destructible.HitPointChanged -= OnHitPointChanged;
-    }
-
-    private void OnHitPointChanged(int value)
-    {
-        slider.value = destructible.HitPoint;
     }
 
     private void SetLocalTeamColor()

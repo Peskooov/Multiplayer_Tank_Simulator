@@ -16,16 +16,9 @@ public class GameSessionCollector : NetworkBehaviour
     [Client]
     private void RpcOnAddPlayer()
     {
-        if (Player.Local != null)
-        { 
-            Player.Local.VehicleSpawned += OnPlayerVehicleSpawned;
-        }
-        else
-        {
-            StartCoroutine(WaitPlayer());
-        }
+        Player.Local.VehicleSpawned += OnPlayerVehicleSpawned;
     }
-    
+
     private void OnPlayerVehicleSpawned(Vehicle vehicle)
     {
         PlayerVehicleSpawned?.Invoke(vehicle);

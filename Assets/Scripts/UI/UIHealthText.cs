@@ -22,7 +22,7 @@ public class UIHealthText : MonoBehaviour
     private void OnPlayerVehicleSpawned(Vehicle vehicle)
     {
         destructible = vehicle;
- 
+
         destructible.HitPointChanged += OnHitPointChanged;
         text.text = destructible.HitPoint.ToString();
     }

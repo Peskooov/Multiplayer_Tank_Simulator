@@ -33,9 +33,13 @@ public class Destructible : NetworkBehaviour
     [Server]
     public void SvApplyDamage(int damage)
     {
-        syncCurrentHitPoint -= damage;
-
-        if (syncCurrentHitPoint <= 0)
+        if (syncCurrentHitPoint - damage > 0)
+        {
+            
+            Debug.Log($"SvApplyDamage({damage})");
+            syncCurrentHitPoint -= damage;
+        }
+        else
         {
             syncCurrentHitPoint = 0;
 

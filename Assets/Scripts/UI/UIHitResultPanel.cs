@@ -31,8 +31,8 @@ public class UIHitResultPanel : MonoBehaviour
         // Создаем и настраиваем попап
         UIHitResultPopup hitPopup = Instantiate(hitResultPopup, spawnPanel);
         hitPopup.transform.localScale = Vector3.one;
-        hitPopup.transform.position = Camera.main.WorldToScreenPoint(hitResult.Point);
-
+        hitPopup.transform.position = VehicleCamera.Instance.Camera.WorldToScreenPoint(hitResult.Point);
+        
         // Устанавливаем текст в зависимости от типа попадания
         switch (hitResult.Type)
         {

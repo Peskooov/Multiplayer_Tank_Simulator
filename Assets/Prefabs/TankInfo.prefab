@@ -102,6 +102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2f0c0c5c70c99e419efa8d0cdf870f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uiHealthText: {fileID: 0}
   slider: {fileID: 8131849813922675664}
   sliderImages: {fileID: 3496990927082487399}
   localTeamColor: {r: 0, g: 1, b: 0, a: 1}
