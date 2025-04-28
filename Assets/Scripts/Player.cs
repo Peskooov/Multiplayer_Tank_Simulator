@@ -145,10 +145,10 @@ public class Player : NetworkBehaviour
 
     public override void OnStartClient()
     {
-        base.OnStartClient();
-
         if (isOwned)
         {
+            Debug.Log("StartClient" + Player.Local.Nickname);
+            
             CmdSetName(NetworkSessionManager.Instance.GetComponent<NetworkManagerHUD>().PlayerNickname);
 
             NetworkSessionManager.Match.MatchEnd += OnMatchEnd;
@@ -159,6 +159,8 @@ public class Player : NetworkBehaviour
                 
             CmdUpdateData(Data);
         }
+        
+        base.OnStartClient();
     }
 
     [Command]

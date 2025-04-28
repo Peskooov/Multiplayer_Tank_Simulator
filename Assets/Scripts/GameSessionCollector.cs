@@ -16,6 +16,10 @@ public class GameSessionCollector : NetworkBehaviour
     [Client]
     private void RpcOnAddPlayer()
     {
+       /* if (Player.Local == null)
+        {
+            Debug.LogWarning("Player Local is null");
+        } */
         Player.Local.VehicleSpawned += OnPlayerVehicleSpawned;
     }
 

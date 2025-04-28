@@ -21,8 +21,10 @@ public class NetworkSessionManager : NetworkManager
 
   public override void OnServerConnect(NetworkConnectionToClient conn)
   {
-      base.OnServerConnect(conn);
+      
       
       gameSessionCollector.SvOnAddPlayer();
+      
+      base.OnServerConnect(conn);
   }
 }
