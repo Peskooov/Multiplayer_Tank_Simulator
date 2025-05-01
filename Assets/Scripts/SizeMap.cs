@@ -7,7 +7,7 @@ public class SizeMap : MonoBehaviour
 
     public Vector3 GetNormPos(Vector3 pos)
     {
-        return new Vector3(pos.x / size.x, 0, pos.z / size.y);
+        return new Vector3(pos.x / (size.x *0.5f), 0, pos.z / (size.y *0.5f));
     }
  
     void OnDrawGizmos()

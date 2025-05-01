@@ -16,10 +16,6 @@ public class UIHealthSlider : MonoBehaviour
 
     private void Start()
     {
-        if (NetworkSessionManager.Events != null)
-        {
-            Debug.LogWarning("NetworkSessionManager");
-        }
         NetworkSessionManager.Events.PlayerVehicleSpawned += OnPlayerVehicleSpawned;
     }
     

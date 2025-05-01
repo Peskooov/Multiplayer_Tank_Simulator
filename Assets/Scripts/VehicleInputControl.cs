@@ -35,24 +35,18 @@ public class VehicleInputControl : MonoBehaviour
     {
         Ray ray = new Ray(start, direction);
 
-        RaycastHit[] hits = Physics.RaycastAll(ray, AimDistance);
+        RaycastHit[] hits = Physics.RaycastAll(ray, AimDistance); // Обратный порядок
 
-        // Получаем Rigidbody локального игрока, если он существует
-        Rigidbody rb = null;
-        if (Player.Local != null && Player.Local.ActiveVehicle != null)
+        var t = Player.Local.ActiveVehicle;
+
+        for (int i = hits.Length - 1; i >= 0; i--)
         {
-            rb = Player.Local.ActiveVehicle.GetComponent<Rigidbody>();
+            if (hits[i].collider.isTrigger == true)
+                continue;
+            if (hits[i].collider.transform.root.GetComponent<Vehicle>() == t)
+                continue;
+            return hits[i].point;
         }
-
-        // Игнорируем попадание в транспортное средство локального игрока
-        foreach (var hit in hits)
-        {
-            if (hit.rigidbody == rb || hit.collider.isTrigger) continue;
-
-            return hit.point;
-        }
-
-        // Если ничего не найдено, возвращаем точку на расстоянии AimDistance
         return ray.GetPoint(AimDistance);
     }
 }

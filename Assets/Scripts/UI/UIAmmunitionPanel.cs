@@ -6,51 +6,49 @@ public class UIAmmunitionPanel : MonoBehaviour
     [SerializeField] private Transform ammunitionPanel;
     [SerializeField] private UIAmmunitionElement ammunitionElementPrefab;
 
-    private List<UIAmmunitionElement> allAmmunitionElements = new List<UIAmmunitionElement>();
-    private List<Ammunition> allAmmunition = new List<Ammunition>();
+    private List<UIAmmunitionElement> allAmmunationElements = new List<UIAmmunitionElement>();
+    private List<Ammunition> allAmmunation = new List<Ammunition>();
     private Turret turret;
     
     private int lastSelectionAmmunationIndex;
 
     private void Start()
     {
-        NetworkSessionManager.Events.PlayerVehicleSpawned += OnPlayerVehicleSpawned;
+        NetworkSessionManager.Match.MatchStart += OnMatchStarted;
+        NetworkSessionManager.Match.MatchEnd += OnMatchEnd;
     }
 
     private void OnDestroy()
     {
-        if (NetworkSessionManager.Instance != null && NetworkSessionManager.Events != null)
-            NetworkSessionManager.Events.PlayerVehicleSpawned -= OnPlayerVehicleSpawned;
-
-        if (turret != null)
-            turret.UpdateSelectedAmmunition -= OnTurretUpdateSelectedAmmunition;
-
-        for (int i = 0; i < allAmmunition.Count; i++)
-        {
-            allAmmunition[i].AmmoCountChanged -= OnAmmoCountChanged;
-        }
+        NetworkSessionManager.Match.MatchStart -= OnMatchStarted;
+        NetworkSessionManager.Match.MatchEnd -= OnMatchEnd;
     }
 
-    private void OnPlayerVehicleSpawned(Vehicle vehicle)
+    private void OnMatchStarted()
     {
-        ClearAmmunitionUI(); // Очищаем старый UI
+        turret = Player.Local.ActiveVehicle.Turret;
+        turret.UpdateSelectedAmmunation += OnTurretUpdateSelectedAmmunation;
 
-        turret = vehicle.Turret;
-        turret.UpdateSelectedAmmunition += OnTurretUpdateSelectedAmmunition;
+        for (int i = 0; i < ammunitionPanel.childCount; i++)
+        {
+            Destroy(ammunitionPanel.GetChild(i).gameObject);
+        }
 
+        allAmmunationElements.Clear();
+        allAmmunation.Clear();
+        
         for (int i = 0; i < turret.Ammunition.Length; i++)
         {
             UIAmmunitionElement ammunitionElement = Instantiate(ammunitionElementPrefab);
             ammunitionElement.transform.SetParent(ammunitionPanel);
             ammunitionElement.transform.localScale = Vector3.one;
-        
             ammunitionElement.SetAmmunition(turret.Ammunition[i]);
 
             turret.Ammunition[i].AmmoCountChanged += OnAmmoCountChanged;
-        
-            allAmmunitionElements.Add(ammunitionElement);
-            allAmmunition.Add(turret.Ammunition[i]);
-        
+
+            allAmmunationElements.Add(ammunitionElement);
+            allAmmunation.Add(turret.Ammunition[i]);
+
             if (i == 0)
             {
                 ammunitionElement.Select();
@@ -58,32 +56,26 @@ public class UIAmmunitionPanel : MonoBehaviour
         }
     }
 
-    private void ClearAmmunitionUI()
+    private void OnMatchEnd()
     {
-        foreach (Transform child in ammunitionPanel)
-        {
-            Destroy(child.gameObject);
-        }
+        if (turret != null)
+            turret.UpdateSelectedAmmunation -= OnTurretUpdateSelectedAmmunation;
 
-        foreach (var ammo in allAmmunition)
+        for (int i = 0; i < allAmmunation.Count; i++)
         {
-            if (ammo != null)
-                ammo.AmmoCountChanged -= OnAmmoCountChanged;
+            allAmmunation[i].AmmoCountChanged -= OnAmmoCountChanged;
         }
-
-        allAmmunitionElements.Clear();
-        allAmmunition.Clear();
     }
     
     private void OnAmmoCountChanged(int count)
     {
-        allAmmunitionElements[turret.SelectedAmmunitionIndex].UpdateAmmoCount(count);
+        allAmmunationElements[turret.SelectedAmmunitionIndex].UpdateAmmoCount(count);
     }
 
-    private void OnTurretUpdateSelectedAmmunition(int index)
+    private void OnTurretUpdateSelectedAmmunation(int index)
     {
-        allAmmunitionElements[lastSelectionAmmunationIndex].UnSelect();
-        allAmmunitionElements[index].Select();
+        allAmmunationElements[lastSelectionAmmunationIndex].UnSelect();
+        allAmmunationElements[index].Select();
         
         lastSelectionAmmunationIndex = index;
     }

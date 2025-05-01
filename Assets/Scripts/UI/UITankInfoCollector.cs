@@ -8,7 +8,7 @@ public class UITankInfoCollector : MonoBehaviour
     [SerializeField] private UITankInfo tankInfoPrefab;
     
     private UITankInfo[] tankInfo;
-    private List<Player> playersWithoutLocal;
+    private List<Vehicle> vehiclesWithoutLocal;
     
     private void Start()
     {
@@ -45,40 +45,44 @@ public class UITankInfoCollector : MonoBehaviour
     
     private void Update()
     {
-        if(tankInfo == null) return;
-
+        if (tankInfo == null) return;
+    
         for (int i = 0; i < tankInfo.Length; i++)
         {
-            if(tankInfo[i] == null) return;
-            
+            if (tankInfo[i] == null) continue;
+        
+            bool isVisible = Player.Local.ActiveVehicle.Viewer.IsVisible(tankInfo[i].Tank.netIdentity);
+            tankInfo[i].gameObject.SetActive(isVisible);
+        
+            if (tankInfo[i].gameObject.activeSelf == false) continue;
+        
             Vector3 screenPos = VehicleCamera.Instance.Camera.WorldToScreenPoint(tankInfo[i].Tank.transform.position + tankInfo[i].WorldOffset);
-            
-            if(screenPos.z > 0)
+            if (screenPos.z > 0)
             {
-                tankInfo[i].transform.position = screenPos; 
+                tankInfo[i].transform.position = screenPos;
             }
         }
     }
 
     private void OnMatchStart()
     {
-        Player[] players = FindObjectsOfType<Player>();
+        Vehicle[] vehicles = FindObjectsOfType<Vehicle>();
         
-        playersWithoutLocal = new List<Player>(players.Length -1);
+        vehiclesWithoutLocal = new List<Vehicle>(vehicles.Length -1);
 
-        for (int i = 0; i < players.Length; i++)
+        for (int i = 0; i < vehicles.Length; i++)
         {
-            if(players[i] == Player.Local) continue;
+            if(vehicles[i] == Player.Local.ActiveVehicle) continue;
             
-            playersWithoutLocal.Add(players[i]);
+            vehiclesWithoutLocal.Add(vehicles[i]);
         }
         
-        tankInfo = new UITankInfo[playersWithoutLocal.Count];
+        tankInfo = new UITankInfo[vehiclesWithoutLocal.Count];
 
-        for (int i = 0; i < playersWithoutLocal.Count; i++)
+        for (int i = 0; i < vehiclesWithoutLocal.Count; i++)
         {
             tankInfo[i] = Instantiate(tankInfoPrefab);
-            tankInfo[i].SetTank(playersWithoutLocal[i].ActiveVehicle);
+            tankInfo[i].SetTank(vehiclesWithoutLocal[i]);
             tankInfo[i].transform.SetParent(tankInfoPanel);
         }
     }

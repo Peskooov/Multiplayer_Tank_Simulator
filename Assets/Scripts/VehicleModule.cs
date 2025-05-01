@@ -12,11 +12,13 @@ public class VehicleModule : Destructible
     
     private void Awake()
     {
-        armor.SetDestructible(this);
+        
     }
 
     private void Start()
     {
+        armor.SetDestructible(this);
+        
         Destroyed += OnModuleDestroyed;
         enabled = false;
     }

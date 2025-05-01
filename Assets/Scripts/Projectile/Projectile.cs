@@ -52,27 +52,17 @@ public class Projectile : MonoBehaviour
     }
 
     private void SvTakeDamage(ProjectileHitResult result)
-    { 
-        if (hit == null)
-        {
-            Debug.LogWarning("Something went wrong");
-            return;
-        } /*
-
-        if (hit == null || hit.HitArmor == null || hit.HitArmor.Destructible == null)
-        {
-            Debug.LogWarning("Null");
-            return;
-        }*/
-        
-        hit.HitArmor.Destructible.SvApplyDamage((int) result.Damage);
+    {
+        if (hit.HitArmor.Destructible != null)
+            hit.HitArmor.Destructible.SvApplyDamage((int)result.Damage);
     }
 
     private void SvAddFrags()
     {
         if (hit.HitArmor.Type == ArmorType.Module) return;
 
-        if (hit.HitArmor.Destructible.HitPoint <= 0)
+        // Проверка на здоровье Destructible
+        if (hit.HitArmor.Destructible != null && hit.HitArmor.Destructible.HitPoint <= 0)
         {
             if (Owner != null)
             {

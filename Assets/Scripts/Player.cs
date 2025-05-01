@@ -147,8 +147,6 @@ public class Player : NetworkBehaviour
     {
         if (isOwned)
         {
-            Debug.Log("StartClient" + Player.Local.Nickname);
-            
             CmdSetName(NetworkSessionManager.Instance.GetComponent<NetworkManagerHUD>().PlayerNickname);
 
             NetworkSessionManager.Match.MatchEnd += OnMatchEnd;
@@ -239,6 +237,7 @@ public class Player : NetworkBehaviour
         
         ActiveVehicle = playerVehicle.GetComponent<Vehicle>();
         ActiveVehicle.Owner = netIdentity;
+        ActiveVehicle.TeamID = teamID;
         
         RpcSetVehicle(ActiveVehicle.netIdentity);
     }
@@ -250,6 +249,7 @@ public class Player : NetworkBehaviour
 
         ActiveVehicle = vehicle.GetComponent<Vehicle>();
         ActiveVehicle.Owner = netIdentity;
+        ActiveVehicle.TeamID = teamID;
 
         if (ActiveVehicle != null && ActiveVehicle.isOwned && VehicleCamera.Instance != null)
         {

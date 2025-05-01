@@ -9,7 +9,7 @@ public enum ArmorType
 
 public class Armor : MonoBehaviour
 {
-    [SerializeField] private Transform parent;
+    
     
     [SerializeField] private ArmorType armorType;
     [SerializeField] private Destructible destructible;
@@ -19,10 +19,7 @@ public class Armor : MonoBehaviour
     public Destructible Destructible => destructible;
     public int Thickness => thickness;
 
-    private void Awake()
-    {
-        transform.SetParent(parent);
-    }
+  
 
     public void SetDestructible(Destructible destructible)
     {

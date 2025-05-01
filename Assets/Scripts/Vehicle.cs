@@ -1,7 +1,5 @@
-using System;
 using Mirror;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class Vehicle :  Destructible
 {
@@ -19,6 +17,9 @@ public class Vehicle :  Destructible
     [SerializeField] protected Transform zoomOpticPosition;
     public Transform ZoomOpticPosition => zoomOpticPosition;
 
+    public int TeamID;
+    public VehicleViewer Viewer;
+    
     public Turret Turret;
     
     [SyncVar(hook = "T")] public NetworkIdentity Owner;
@@ -28,14 +29,16 @@ public class Vehicle :  Destructible
     }
     
     public virtual float LinearVelocity => 0;
+
+    protected float syncLinearVelocity;
     
     public float NormalizedLinearVelocity
     {
         get
         {
-            if (Mathf.Approximately(0, LinearVelocity) == true) return 0;
+            if (Mathf.Approximately(0, syncLinearVelocity) == true) return 0;
 
-            return Mathf.Clamp01(LinearVelocity / maxLinearVelocity);
+            return Mathf.Clamp01(syncLinearVelocity / maxLinearVelocity);
         }
     }
 

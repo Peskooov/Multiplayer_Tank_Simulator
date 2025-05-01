@@ -1,3 +1,4 @@
+using System;
 using Mirror;
 using UnityEngine;
 using UnityEngine.Events;
@@ -14,11 +15,28 @@ public class Destructible : NetworkBehaviour
     [SerializeField] private int maxHitPoint;
     [SerializeField] private int currentHitPoint;
 
+    public bool track; 
+    
     public int MaxHitPoint => maxHitPoint;
     public int HitPoint => currentHitPoint;
 
     [SyncVar(hook = nameof(SyncHitPoint))]
     private int syncCurrentHitPoint;
+
+    private void Update()
+    {
+       
+            if(Input.GetKeyDown(KeyCode.Space) && maxHitPoint == 50)
+                //RpcDestroy();
+                     CmdApplyDamage();
+        
+    }
+    
+    [Command] // Добавляем команду для вызова с клиента
+    private void CmdApplyDamage()
+    {
+        SvApplyDamage(100); // Серверный метод вызывается теперь через команду
+    }
 
     #region Server
 
@@ -33,16 +51,13 @@ public class Destructible : NetworkBehaviour
     [Server]
     public void SvApplyDamage(int damage)
     {
-        if (syncCurrentHitPoint - damage > 0)
-        {
-            
-            Debug.Log($"SvApplyDamage({damage})");
-            syncCurrentHitPoint -= damage;
-        }
-        else
+        if (damage <= 0) return;
+
+        syncCurrentHitPoint -= damage;
+Debug.Log($"Damage: {damage}");
+        if (syncCurrentHitPoint <= 0)
         {
             syncCurrentHitPoint = 0;
-
             RpcDestroy();
         }
     }
@@ -60,13 +75,15 @@ public class Destructible : NetworkBehaviour
     #region Client
     private void SyncHitPoint(int oldValue, int newValue)
     {
-        currentHitPoint = newValue;
+        currentHitPoint = newValue; // Обновляем текущее здоровье
         HitPointChanged?.Invoke(newValue);
     }
     
     [Client]
     private void RpcDestroy()
     {
+        Debug.Log(gameObject.name + " has destroyed");
+        
         Destroyed?.Invoke(this);
         eventDestroyed?.Invoke();
     }

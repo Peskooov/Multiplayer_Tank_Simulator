@@ -147,11 +147,14 @@ public class TrackTank : Vehicle
     
     private Rigidbody rigidBody;
 
-    private void Start()
+    private void Awake()
     {
         rigidBody = GetComponent<Rigidbody>();
         rigidBody.centerOfMass = centerOfMass.localPosition;
+    }
 
+    private void Start()
+    {
         Destroyed += OnTrackTankDestroyed;
     }
 
@@ -167,6 +170,8 @@ public class TrackTank : Vehicle
             UpdateMotorTorque();
             
             CmdUpdateWheelRpm(LeftWheelRPM,RightWheelRPM);
+            
+            CmdUpdateLinearVelocity(LinearVelocity);
         }
     }
     
@@ -179,7 +184,12 @@ public class TrackTank : Vehicle
         visualModel.SetActive(false);
     }
 
-
+    [Command]
+    private void CmdUpdateLinearVelocity(float velocity)
+    {
+        syncLinearVelocity = velocity;
+    }
+    
     [Command]
     private void CmdUpdateWheelRpm(float leftRpm, float rightRpm)
     {

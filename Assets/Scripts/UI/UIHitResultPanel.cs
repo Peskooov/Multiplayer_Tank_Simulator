@@ -4,16 +4,15 @@ public class UIHitResultPanel : MonoBehaviour
 {
     [SerializeField] private Transform spawnPanel;
     [SerializeField] private UIHitResultPopup hitResultPopup;
-    
+
     private void Start()
     {
-            NetworkSessionManager.Match.MatchStart += OnMatchStart;
+        NetworkSessionManager.Match.MatchStart += OnMatchStart;
     }
-    
+
     private void OnDestroy()
     {
-            NetworkSessionManager.Match.MatchStart -= OnMatchStart;
-            Player.Local.ProjectileHit -= OnProjectileHit;
+//        NetworkSessionManager.Match.MatchStart -= OnMatchStart;
     }
 
     private void OnMatchStart()
