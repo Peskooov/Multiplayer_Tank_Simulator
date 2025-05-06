@@ -14,17 +14,17 @@ public class UIPlayerList : MonoBehaviour
 
     private void Start()
     {
-        PlayerList.UpdatePlayerList += OnUpdatePlayerList;
+        MatchMemberList.UpdateList += OnUpdatePlayerList;
         Player.ChangeFrags += OnChangeFrags;
     }
 
     private void OnDestroy()
     {
-        PlayerList.UpdatePlayerList -= OnUpdatePlayerList;
+        MatchMemberList.UpdateList -= OnUpdatePlayerList;
         Player.ChangeFrags -= OnChangeFrags;
     }
 
-    private void OnUpdatePlayerList(List<PlayerData> playerData)
+    private void OnUpdatePlayerList(List<MatchMemberData> playerData)
     {
         for (int i = 0; i < localTeamPanel.childCount; i++)
         {
@@ -51,20 +51,20 @@ public class UIPlayerList : MonoBehaviour
         }
     }
 
-    private void AddPlayerLable(PlayerData playerData, UIPlayerLable playerLable,Transform parent)
+    private void AddPlayerLable(MatchMemberData matchMemberData, UIPlayerLable playerLable,Transform parent)
     {
         UIPlayerLable uiPlayerLable = Instantiate(playerLable);
         uiPlayerLable.transform.SetParent(parent);
-        uiPlayerLable.Init(playerData.ID, playerData.Nickname);
+        uiPlayerLable.Init(matchMemberData.ID, matchMemberData.Nickname);
         
         allPlayerLables.Add(uiPlayerLable);
     }
 
-    private void OnChangeFrags(int playerNetID, int frags)
+    private void OnChangeFrags(MatchMember member, int frags)
     {
         for (int i = 0; i < allPlayerLables.Count; i++)
         {
-            if (allPlayerLables[i].NetID == playerNetID)
+            if (allPlayerLables[i].NetID == member.netId)
             {
                 allPlayerLables[i].UpdateFrags(frags);
             }

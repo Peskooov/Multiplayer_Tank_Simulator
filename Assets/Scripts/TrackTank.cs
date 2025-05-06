@@ -165,6 +165,15 @@ public class TrackTank : Vehicle
     
     private void FixedUpdate()
     {
+        if (isServer)
+        {
+            UpdateMotorTorque();
+            
+            SvUpdateWheelRpm(LeftWheelRPM,RightWheelRPM);
+            
+            SvUpdateLinearVelocity(LinearVelocity);
+        }
+        
         if (isOwned)
         {
             UpdateMotorTorque();
@@ -186,6 +195,12 @@ public class TrackTank : Vehicle
 
     [Command]
     private void CmdUpdateLinearVelocity(float velocity)
+    {
+        SvUpdateLinearVelocity(velocity);
+    }
+    
+    [Server] 
+    private void SvUpdateLinearVelocity(float velocity)
     {
         syncLinearVelocity = velocity;
     }
@@ -291,21 +306,21 @@ public class TrackTank : Vehicle
             
             if (steering != 0 && (Mathf.Abs(leftWheelRow.minRpm) <1 || Mathf.Abs(rightWheelRow.minRpm) <1))
             {
-                leftWheelRow.SetTorque(rotateTorqueInMotion);
-                rightWheelRow.SetTorque(rotateTorqueInMotion);
+                leftWheelRow.SetTorque(rotateTorqueInMotion * Mathf.Sign(currentMotorTorque));
+                rightWheelRow.SetTorque(rotateTorqueInMotion * Mathf.Sign(currentMotorTorque));
             }
             else
             {
                 if (steering < 0)
                 {
-                    leftWheelRow.Break(rotateBreakInMotion);
-                    rightWheelRow.SetTorque(rotateTorqueInMotion);
+                    leftWheelRow.Break(rotateBreakInMotion );
+                    rightWheelRow.SetTorque(rotateTorqueInMotion * Mathf.Sign(currentMotorTorque));
                 }
 
                 if (steering > 0)
                 {
-                    rightWheelRow.Break(rotateBreakInMotion);
-                    leftWheelRow.SetTorque(rotateTorqueInMotion);
+                    rightWheelRow.Break(rotateBreakInMotion );
+                    leftWheelRow.SetTorque(rotateTorqueInMotion *  Mathf.Sign(currentMotorTorque) );
                 }
             }
             

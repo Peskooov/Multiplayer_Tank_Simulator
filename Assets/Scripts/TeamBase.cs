@@ -1,9 +1,5 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Collider))]
 public class TeamBase : MonoBehaviour
@@ -15,7 +11,6 @@ public class TeamBase : MonoBehaviour
     public float CaptureLevel => captureLevel;
 
     [SerializeField] private List<Vehicle> allVehicles = new List<Vehicle>();
-
     
     private void Update()
     {
@@ -46,7 +41,7 @@ public class TeamBase : MonoBehaviour
         if (vehicle == null) return;
         if (vehicle.HitPoint <= 0) return;
         if (allVehicles.Contains(vehicle)) return;
-        if (vehicle.Owner.GetComponent<Player>().TeamID == teamID) return;
+        if (vehicle.GetComponent<MatchMember>().TeamID == teamID) return;
 
         vehicle.HitPointChanged += OnHitPointChanged;
         allVehicles.Add(vehicle);

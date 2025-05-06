@@ -20,8 +20,8 @@ public class UIAmmunitionPanel : MonoBehaviour
 
     private void OnDestroy()
     {
-        NetworkSessionManager.Match.MatchStart -= OnMatchStarted;
-        NetworkSessionManager.Match.MatchEnd -= OnMatchEnd;
+        //NetworkSessionManager.Match.MatchStart -= OnMatchStarted;
+        //NetworkSessionManager.Match.MatchEnd -= OnMatchEnd;
     }
 
     private void OnMatchStarted()

@@ -1,5 +1,6 @@
-using System;
+using System.Collections;
 using Mirror;
+using UnityEngine;
 using UnityEngine.Events;
 
 public interface IMatchCondition
@@ -12,11 +13,26 @@ public interface IMatchCondition
 
 public class MatchController : NetworkBehaviour
 {
+    private static int TeamIDCounter;
+
+    public static int GetNextTeam()
+    {
+        return TeamIDCounter++ % 2;
+    }
+
+    public static void ResetTeamIDCounter()
+    {
+        TeamIDCounter = 1;
+    }
+
     public event UnityAction MatchStart;
     public event UnityAction MatchEnd;
     
     public event UnityAction SvMatchStart;
     public event UnityAction SvMatchEnd;
+    
+    [SerializeField] private MatchMemberSpawner spawner;
+    [SerializeField] private float delayAfterSpawnBeforeStartMatch = 0.5f;
     
     [SyncVar] private bool isMatchActive; 
     public bool IsMatchActive => isMatchActive;
@@ -51,25 +67,19 @@ public class MatchController : NetworkBehaviour
     [Server]
     public void SvRestartMatch()
     {
-        if(isMatchActive) return;
-        
+        if (isMatchActive) return;
+
         isMatchActive = true;
+
+        spawner.SvRespawnVehiclesAllMembers();
+
+        StartCoroutine(StartEventMatchWithDelay(delayAfterSpawnBeforeStartMatch));
+    }
+
+    private IEnumerator StartEventMatchWithDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
         
-        foreach (var p in FindObjectsOfType<Player>())
-        {
-            if (p.ActiveVehicle != null)
-            {
-                NetworkServer.UnSpawn(p.ActiveVehicle.gameObject);
-                Destroy(p.ActiveVehicle.gameObject);
-                p.ActiveVehicle = null;
-            }
-        }
-
-        foreach (var p in FindObjectsOfType<Player>())
-        {
-            p.SvSpawnClientVehicle();
-        }
-
         foreach (IMatchCondition matchCondition in matchConditions)
         {
             matchCondition.OnServerMatchStart(this);
