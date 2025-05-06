@@ -126,6 +126,26 @@ public class VehicleViewer : NetworkBehaviour
         return visibleVehicles.Contains(identity);
     }
     
+    public List<Vehicle> GetAllVehicle()
+    {
+        List<Vehicle> av = new List<Vehicle>(allVehicleDimensions.Count);
+        for (int i = 0; i < allVehicleDimensions.Count; i++)
+        {
+            av.Add(allVehicleDimensions[i].Vehicle);
+        }
+        return av;
+    }
+
+    public List<Vehicle> GetAllVisibleVehicle()
+    {
+        List<Vehicle> av = new List<Vehicle>(allVehicleDimensions.Count);
+        for (int i = 0; i < visibleVehicles.Count; i++)
+        {
+            av.Add(visibleVehicles[i].GetComponent<Vehicle>());
+        }
+        return av;
+    }
+    
     private bool CheckVisibility(Vector3 viewPoint, VehicleDimensions vehicleDimensions)
     {
         float distance = Vector3.Distance(transform.position, vehicleDimensions.transform.position);

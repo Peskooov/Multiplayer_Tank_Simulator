@@ -1,6 +1,5 @@
 using UnityEngine;
 
-
 public class SphereArea : MonoBehaviour
 {
     [SerializeField] private float radius;

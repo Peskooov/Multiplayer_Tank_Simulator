@@ -5,6 +5,7 @@ using UnityEngine;
 public class VehicleDimensions : MonoBehaviour
 {
     [SerializeField] private Transform[] points;
+[SerializeField] private Transform[] priorityFirePoints;
 
     private Vehicle vehicle;
     public Vehicle Vehicle => vehicle;
@@ -14,6 +15,11 @@ public class VehicleDimensions : MonoBehaviour
         vehicle = GetComponent<Vehicle>();
     }
 
+    public Transform GetPriorityFirePoint()
+    {
+        return priorityFirePoints[Random.Range(0, priorityFirePoints.Length)];
+    }
+    
     public bool IsVisibleFromPoint(Transform source, Vector3 point, Color color)
     {
         bool visible = true;
