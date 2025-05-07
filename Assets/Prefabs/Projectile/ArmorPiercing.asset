@@ -21,7 +21,7 @@ MonoBehaviour:
   damage: 50
   damageSpread: 0.25
   caliber: 85
-  armorPenetration: 50
+  armorPenetration: 70
   armorPenetrationSpread: 0.25
   normalizationAngle: 5
   ricochetAngle: 70

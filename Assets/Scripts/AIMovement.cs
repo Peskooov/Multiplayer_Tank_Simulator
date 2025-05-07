@@ -54,7 +54,7 @@ public class AIMovement : MonoBehaviour
 
     private void Update()
     {
-        SetDestination( GameObject.FindGameObjectWithTag("Finish").transform.position);
+        //SetDestination( GameObject.FindGameObjectWithTag("Finish").transform.position);
         
         if (pathUpdateRate > 0)
         {
@@ -128,7 +128,7 @@ public class AIMovement : MonoBehaviour
         var tankPosition = vehicle.transform.GetPositionZX();
         var targetPosition = nextPathPoint.GetPositionZX();
         
-        return (tankPosition - tankPosition).normalized;
+        return (targetPosition - tankPosition).normalized;
     }
     
     private Vector3 GetTankDirectionZX()

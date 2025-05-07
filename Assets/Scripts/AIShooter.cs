@@ -20,7 +20,7 @@ public class AIShooter : MonoBehaviour
 
     private void Update()
     {
-        FindTarget();
+        //FindTarget();
         LookOnTarget();
         TryFire();
     }

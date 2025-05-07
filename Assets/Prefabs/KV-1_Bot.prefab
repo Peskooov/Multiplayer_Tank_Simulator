@@ -8582,6 +8582,7 @@ GameObject:
   - component: {fileID: 2550402518688134667}
   - component: {fileID: -5875518733457880464}
   - component: {fileID: 7738558095243665738}
+  - component: {fileID: 1236657894740029861}
   m_Layer: 0
   m_Name: KV-1_Bot
   m_TagString: Untagged
@@ -9187,7 +9188,7 @@ MonoBehaviour:
   sensorBackward: {fileID: 5898758938391119301}
   sensorLeft: {fileID: 5909176679685974184}
   sensorRight: {fileID: 2426754267775801556}
-  stopDistance: 0.5
+  stopDistance: 1
   pathUpdateRate: 0.35
 --- !u!114 &7738558095243665738
 MonoBehaviour:
@@ -9203,6 +9204,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   viewer: {fileID: 2116528816933653180}
   firePosition: {fileID: 2400814555805860862}
+--- !u!114 &1236657894740029861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2768335471280565170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0279569a91be1ac4aa9213c3bfe61402, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  behaviourType: 0
+  patrolChance: 0.75
+  supportChance: 0.2
+  invaderBaseChance: 0.2
+  vehicle: {fileID: 5030622442570305750}
+  movement: {fileID: -5875518733457880464}
+  shooter: {fileID: 7738558095243665738}
 --- !u!1 &2830147535013514174
 GameObject:
   m_ObjectHideFlags: 0
