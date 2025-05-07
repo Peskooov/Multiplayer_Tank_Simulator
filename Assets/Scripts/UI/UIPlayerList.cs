@@ -55,7 +55,8 @@ public class UIPlayerList : MonoBehaviour
     {
         UIPlayerLable uiPlayerLable = Instantiate(playerLable);
         uiPlayerLable.transform.SetParent(parent);
-        uiPlayerLable.Init(matchMemberData.ID, matchMemberData.Nickname);
+        Destructible destructible = matchMemberData.Member?.GetComponent<Destructible>();
+        uiPlayerLable.Init(matchMemberData.ID, matchMemberData.Nickname, destructible);
         
         allPlayerLables.Add(uiPlayerLable);
     }

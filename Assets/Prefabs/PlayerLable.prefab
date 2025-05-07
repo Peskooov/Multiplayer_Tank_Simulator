@@ -251,6 +251,7 @@ MonoBehaviour:
   nicknameText: {fileID: 2525525479825732372}
   bgImage: {fileID: 5077517569762262473}
   selfColor: {r: 0.7, g: 0.5, b: 0, a: 0.5019608}
+  disableColor: {r: 0.33962262, g: 0.33962262, b: 0.33962262, a: 0.5019608}
 --- !u!1 &4148748916264232550
 GameObject:
   m_ObjectHideFlags: 0
